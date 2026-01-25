@@ -8,8 +8,8 @@ const Courses = () => {
   return (
     <Section id="courses" className="bg-white py-20">
       <Container>
-        <SectionTitle>Our Courses</SectionTitle>
-        <SectionSubtitle>
+        <SectionTitle className="fade-in-down">Our Courses</SectionTitle>
+        <SectionSubtitle className="fade-in delay-200">
           Choose from basic to advanced courses — NIELIT certified courses (ACC, BCC, CCC, O/A/B/C Level),
           professional diplomas (DCA, ADCA), and modern skill courses (Python, AI, IoT, Digital Marketing).
           Perfect for beginners, job seekers, and professionals. All NIELIT certifications are
@@ -18,8 +18,14 @@ const Courses = () => {
 
         {/* Course Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {coursesData.map((course) => (
-            <CourseCard key={course.id} course={course} getIcon={getIconComponent} />
+          {coursesData.map((course, index) => (
+            <div
+              key={course.id}
+              className="scroll-animate"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <CourseCard course={course} getIcon={getIconComponent} />
+            </div>
           ))}
         </div>
 

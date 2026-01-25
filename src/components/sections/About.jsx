@@ -20,13 +20,13 @@ const About = () => {
     <Section id="about" className="bg-gray-50 py-20">
       <Container>
         <div className="max-w-4xl mx-auto">
-          <SectionTitle>About AY Digital Institute</SectionTitle>
-          <p className="text-lg text-gray-700 mb-6 text-center leading-relaxed">
+          <SectionTitle className="fade-in-down">About AY Digital Institute</SectionTitle>
+          <p className="text-lg text-gray-700 mb-6 text-center leading-relaxed fade-in delay-200">
             AY Digital Institute provides practical computer education for students, job seekers, and
             working professionals. We focus on step-by-step learning, real assignments, and personal
             support so you can confidently use skills in real life or at work.
           </p>
-          <div className="bg-white p-6 rounded-xl shadow-md mb-8 border-l-4 border-primary-600">
+          <div className="bg-white p-6 rounded-xl shadow-md mb-8 border-l-4 border-primary-600 fade-in delay-300 hover:shadow-lg transition-all duration-300">
             <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
               NIELIT Certified Courses
             </h3>
@@ -46,7 +46,8 @@ const About = () => {
               return (
                 <div
                   key={index}
-                  className="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition-shadow duration-300"
+                  className="bg-white p-6 rounded-xl shadow-md text-center hover:shadow-lg transition-all duration-300 transform hover:-translate-y-2 hover:scale-105 scale-in"
+                  style={{ animationDelay: `${(index + 1) * 0.15}s` }}
                 >
                   <div className="flex justify-center mb-4">
                     {IconComponent && <IconComponent className="text-3xl text-primary-600" />}

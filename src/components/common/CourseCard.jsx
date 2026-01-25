@@ -43,8 +43,10 @@ export const getIconComponent = (iconName, className = 'text-4xl text-primary-60
 // Course Card Component
 export const CourseCard = ({ course, getIcon }) => {
   return (
-    <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col">
-      <div className="flex justify-center mb-4">{getIcon(course.icon)}</div>
+    <div className="bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-primary-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col group">
+      <div className="flex justify-center mb-4 transition-transform duration-300 group-hover:scale-110">
+        {getIcon(course.icon)}
+      </div>
       <div className="mb-2">
         <span className="text-xs font-semibold text-primary-600 bg-primary-50 px-2 py-1 rounded">
           {course.category}

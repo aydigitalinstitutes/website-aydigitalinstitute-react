@@ -8,8 +8,11 @@ import WhyChooseUs from './components/sections/WhyChooseUs';
 import Reviews from './components/sections/Reviews';
 import Contact from './components/sections/Contact';
 import WhatsAppButton from './components/WhatsAppButton';
+import { useScrollAnimation } from './utils/useScrollAnimation';
 
 function App() {
+  useScrollAnimation();
+
   return (
     <div className="App">
       <Header />

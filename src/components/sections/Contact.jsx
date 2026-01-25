@@ -38,8 +38,8 @@ const Contact = () => {
   return (
     <Section id="contact" className="bg-white py-20">
       <Container>
-        <SectionTitle>Contact Us</SectionTitle>
-        <SectionSubtitle>Message us to get fees, timings, and course details.</SectionSubtitle>
+        <SectionTitle className="fade-in-down">Contact Us</SectionTitle>
+        <SectionSubtitle className="fade-in delay-200">Message us to get fees, timings, and course details.</SectionSubtitle>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12">
           {/* Contact Info */}

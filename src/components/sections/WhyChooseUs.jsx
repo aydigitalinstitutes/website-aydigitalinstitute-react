@@ -21,8 +21,8 @@ const WhyChooseUs = () => {
   return (
     <Section id="why-us" className="bg-white py-20">
       <Container>
-        <SectionTitle>Why Students Choose Us</SectionTitle>
-        <SectionSubtitle>
+        <SectionTitle className="fade-in-down">Why Students Choose Us</SectionTitle>
+        <SectionSubtitle className="fade-in delay-200">
           We're committed to your success with practical training and personalized support.
         </SectionSubtitle>
 
@@ -32,9 +32,10 @@ const WhyChooseUs = () => {
             return (
               <div
                 key={index}
-                className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl border-2 border-primary-100 hover:border-primary-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl border-2 border-primary-100 hover:border-primary-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scale-in"
+                style={{ animationDelay: `${(index + 1) * 0.15}s` }}
               >
-                <div className="flex justify-center mb-4">
+                <div className="flex justify-center mb-4 transition-transform duration-300 hover:scale-110">
                   {IconComponent && <IconComponent className="text-4xl text-primary-600" />}
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
