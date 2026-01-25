@@ -4,7 +4,7 @@ This guide will help you set up all required secrets for GitHub Actions workflow
 
 ## Quick Setup Steps
 
-1. Go to your repository: https://github.com/anshulyadav32/website-aydigitalinstitute-react
+1. Go to your repository: https://github.com/aydigitalinstitutes/website-aydigitalinstitute-react
 2. Navigate to: **Settings** → **Secrets and variables** → **Actions**
 3. Click **"New repository secret"** for each secret below
 
@@ -129,7 +129,7 @@ gh secret set GH_PAT --body "your-github-pat"  # Optional
 
 ## Verify Secrets Are Set
 
-1. Go to: https://github.com/anshulyadav32/website-aydigitalinstitute-react/settings/secrets/actions
+1. Go to: https://github.com/aydigitalinstitutes/website-aydigitalinstitute-react/settings/secrets/actions
 2. You should see all required secrets listed (10 required + 1 optional)
 3. Secrets are hidden (showing only `••••••••`)
 

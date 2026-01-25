@@ -16,7 +16,7 @@ if (-not $ghInstalled) {
     Write-Host "  Or download from: https://cli.github.com/" -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Alternatively, set secrets manually at:" -ForegroundColor Yellow
-    Write-Host "https://github.com/anshulyadav32/website-aydigitalinstitute-react/settings/secrets/actions" -ForegroundColor Yellow
+    Write-Host "https://github.com/aydigitalinstitutes/website-aydigitalinstitute-react/settings/secrets/actions" -ForegroundColor Yellow
     exit 1
 }
 
@@ -128,8 +128,8 @@ Write-Host "✓ Setup Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Verify secrets at:" -ForegroundColor Cyan
-Write-Host "https://github.com/anshulyadav32/website-aydigitalinstitute-react/settings/secrets/actions" -ForegroundColor Yellow
+Write-Host "https://github.com/aydigitalinstitutes/website-aydigitalinstitute-react/settings/secrets/actions" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Test workflows at:" -ForegroundColor Cyan
-Write-Host "https://github.com/anshulyadav32/website-aydigitalinstitute-react/actions" -ForegroundColor Yellow
+Write-Host "https://github.com/aydigitalinstitutes/website-aydigitalinstitute-react/actions" -ForegroundColor Yellow
 Write-Host ""
