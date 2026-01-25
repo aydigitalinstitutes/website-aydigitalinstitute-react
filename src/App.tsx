@@ -8,6 +8,7 @@ import { useScrollAnimation } from './utils/useScrollAnimation';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
+import BackToTop from './components/common/BackToTop';
 
 // Page Components
 import Home from './pages/Home';
@@ -23,7 +24,7 @@ function AppContent() {
   const location = useLocation();
 
   return (
-    <div className="App">
+    <div className="App font-sans text-gray-900">
       <Header />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
@@ -74,6 +75,7 @@ function AppContent() {
       </AnimatePresence>
       <Footer />
       <WhatsAppButton />
+      <BackToTop />
     </div>
   );
 }
