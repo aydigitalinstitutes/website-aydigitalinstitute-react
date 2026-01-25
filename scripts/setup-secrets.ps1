@@ -106,6 +106,23 @@ if ($generate -eq "" -or $generate -eq "Y" -or $generate -eq "y") {
 }
 
 Write-Host ""
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host "GitHub Authentication (Optional)" -ForegroundColor Cyan
+Write-Host "========================================" -ForegroundColor Cyan
+Write-Host ""
+
+Write-Host "GH_PAT (GitHub Personal Access Token)" -ForegroundColor Cyan
+Write-Host "  Optional: Custom GitHub token for workflows" -ForegroundColor Gray
+Write-Host "  If not set, workflows will use default GITHUB_TOKEN" -ForegroundColor Gray
+Write-Host "  Set this if you need extended permissions" -ForegroundColor Gray
+Write-Host "  Get from: https://github.com/settings/tokens" -ForegroundColor Gray
+Write-Host ""
+$setPat = Read-Host "  Set GH_PAT? (y/N)"
+if ($setPat -eq "y" -or $setPat -eq "Y") {
+    Set-Secret -Name "GH_PAT" -Description "GitHub Personal Access Token" -Example "Get from: https://github.com/settings/tokens"
+}
+
+Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
 Write-Host "✓ Setup Complete!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green

@@ -5,10 +5,8 @@ import connectDB from './config/database.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/user.js';
 
+// Load environment variables first
 dotenv.config();
-
-// Connect to database
-connectDB();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -42,8 +40,23 @@ app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Route not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// Connect to database and start server
+const startServer = async () => {
+  try {
+    // Connect to database first
+    await connectDB();
+    
+    // Start server after database connection
+    app.listen(PORT, () => {
+      console.log(`✓ Server is running on port ${PORT}`);
+      console.log(`✓ Health check: http://localhost:${PORT}/api/health`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 export default app;

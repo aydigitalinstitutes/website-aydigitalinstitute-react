@@ -156,6 +156,8 @@ npm run dev
 
 This project includes GitHub Actions workflows for automated CI/CD:
 
+> 📖 **Quick Setup:** See [SETUP_SECRETS.md](./SETUP_SECRETS.md) for detailed instructions on setting up GitHub secrets.
+
 ### Available Workflows
 - **CI/CD Pipeline**: Automated testing, building, and frontend deployment
 - **Database Migration**: Run database schema updates

@@ -81,6 +81,21 @@ This guide will help you set up all required secrets for GitHub Actions workflow
 - **Or use:** Any long random string (at least 32 characters)
 - **Add as secret:** `JWT_SECRET`
 
+#### 11. GH_PAT (Optional - GitHub Personal Access Token)
+- **Purpose:** Custom GitHub token for workflows (optional, defaults to GITHUB_TOKEN)
+- **When to use:** If you need extended permissions beyond the default GitHub Actions token
+- **How to get it:**
+  1. Go to https://github.com/settings/tokens
+  2. Click **"Generate new token"** → **"Generate new token (classic)"**
+  3. Name it: `github-actions-pat`
+  4. Select scopes:
+     - ✅ `repo` (Full control of private repositories)
+     - ✅ `workflow` (Update GitHub Action workflows)
+  5. Click **"Generate token"**
+  6. Copy the token immediately (you won't see it again)
+  7. Add as secret: `GH_PAT`
+- **Note:** If not set, workflows will use the default `GITHUB_TOKEN` automatically
+
 ---
 
 ## Setting Up Secrets via GitHub CLI (Alternative)
@@ -107,6 +122,7 @@ gh secret set DB_NAME --body "aydigital"
 gh secret set DB_USER --body "your-db-user"
 gh secret set DB_PASSWORD --body "your-db-password"
 gh secret set JWT_SECRET --body "your-jwt-secret"
+gh secret set GH_PAT --body "your-github-pat"  # Optional
 ```
 
 ---
@@ -114,7 +130,7 @@ gh secret set JWT_SECRET --body "your-jwt-secret"
 ## Verify Secrets Are Set
 
 1. Go to: https://github.com/anshulyadav32/website-aydigitalinstitute-react/settings/secrets/actions
-2. You should see all 10 secrets listed
+2. You should see all required secrets listed (10 required + 1 optional)
 3. Secrets are hidden (showing only `••••••••`)
 
 ---
