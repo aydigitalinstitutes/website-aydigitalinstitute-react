@@ -1,46 +1,45 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import LoginForm from '../../src/components/auth/LoginForm';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { motion } from 'framer-motion';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import { loginSchema, type LoginFormData } from '../../lib/zod-schemas';
+import AnimatedButton from '../common/AnimatedButton';
+import { fadeInUp, staggerContainer, staggerItem, scaleIn } from '../../utils/animations';
+import api from '../../lib/axios';
 
-const Login = () => {
-  const navigate = useNavigate();
+interface LoginFormProps {
+  onSuccess?: () => void;
+}
 
-  const handleSuccess = () => {
-    navigate('/dashboard');
-  };
-
-  return <LoginForm onSuccess={handleSuccess} />;
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+const LoginForm = ({ onSuccess }: LoginFormProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    const result = await login(formData.email, formData.password);
-
-    if (result.success) {
-      navigate('/dashboard');
-    } else {
-      setError(result.message);
+  const onSubmit = async (data: LoginFormData) => {
+    try {
+      const response = await api.post('/auth/login', data);
+      
+      if (response.data.success) {
+        // Cookies are set automatically by the browser
+        // Update auth context or redirect
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          window.location.href = '/dashboard';
+        }
+      }
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Login failed. Please try again.';
+      setError('root', { message });
     }
-
-    setLoading(false);
   };
 
   return (
@@ -74,19 +73,19 @@ const Login = () => {
           </motion.div>
 
           <AnimatePresence>
-            {error && (
+            {errors.root && (
               <motion.div
                 initial={{ opacity: 0, y: -10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg"
               >
-                {error}
+                {errors.root.message}
               </motion.div>
             )}
           </AnimatePresence>
 
-          <motion.form onSubmit={handleSubmit} className="space-y-6" variants={staggerContainer}>
+          <motion.form onSubmit={handleSubmit(onSubmit)} className="space-y-6" variants={staggerContainer}>
             <motion.div variants={staggerItem}>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
@@ -97,18 +96,28 @@ const Login = () => {
                 </div>
                 <motion.input
                   id="email"
-                  name="email"
                   type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                  {...register('email')}
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all ${
+                    errors.email ? 'border-red-300' : 'border-gray-300'
+                  }`}
                   placeholder="Enter your email"
-                  whileFocus={{ scale: 1.02, borderColor: '#3b82f6' }}
+                  whileFocus={{ scale: 1.02, borderColor: errors.email ? '#ef4444' : '#3b82f6' }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 />
               </div>
+              <AnimatePresence>
+                {errors.email && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.email.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </motion.div>
 
             <motion.div variants={staggerItem}>
@@ -121,46 +130,36 @@ const Login = () => {
                 </div>
                 <motion.input
                   id="password"
-                  name="password"
                   type="password"
-                  autoComplete="current-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                  {...register('password')}
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all ${
+                    errors.password ? 'border-red-300' : 'border-gray-300'
+                  }`}
                   placeholder="Enter your password"
-                  whileFocus={{ scale: 1.02, borderColor: '#3b82f6' }}
+                  whileFocus={{ scale: 1.02, borderColor: errors.password ? '#ef4444' : '#3b82f6' }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 />
               </div>
+              <AnimatePresence>
+                {errors.password && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
+                    className="mt-1 text-sm text-red-600"
+                  >
+                    {errors.password.message}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </motion.div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
 
             <motion.div variants={staggerItem}>
               <AnimatedButton
                 type="submit"
                 variant="primary"
-                disabled={loading}
-                loading={loading}
+                disabled={isSubmitting}
+                loading={isSubmitting}
                 className="w-full py-3 text-lg"
               >
                 Sign In
@@ -185,4 +184,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginForm;
