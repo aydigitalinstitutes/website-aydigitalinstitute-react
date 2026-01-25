@@ -20,7 +20,7 @@ RUN npm -C admin run build
 FROM nginx:alpine
 
 COPY --from=builder /app/admin/dist /usr/share/nginx/html
-COPY nginx/api.conf /etc/nginx/conf.d/default.conf
+COPY nginx/admin.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
