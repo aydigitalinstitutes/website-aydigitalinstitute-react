@@ -23,6 +23,9 @@ if (process.env.DATABASE_URL) {
   });
 } else {
   // Use individual parameters
+  const isLocalhost = (process.env.DB_HOST || 'localhost') === 'localhost';
+  const isTest = process.env.NODE_ENV === 'test';
+  
   sequelize = new Sequelize(
     process.env.DB_NAME || 'neondb',
     process.env.DB_USER || 'neondb_owner',
@@ -31,7 +34,7 @@ if (process.env.DATABASE_URL) {
       host: process.env.DB_HOST || 'localhost',
       port: process.env.DB_PORT || 5432,
       dialect: 'postgres',
-      dialectOptions: {
+      dialectOptions: isLocalhost || isTest ? {} : {
         ssl: {
           require: true,
           rejectUnauthorized: false,
