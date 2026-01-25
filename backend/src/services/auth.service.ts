@@ -4,6 +4,68 @@ import { TokenService } from './token.service.js';
 import { AuthResponse, JWTPayload } from '../types/auth.types.js';
 
 export class AuthService {
+  static async loginWithOAuth(data: {
+    provider: 'GOOGLE' | 'GITHUB';
+    providerId: string;
+    email: string;
+    name: string;
+    avatar?: string;
+  }): Promise<AuthResponse> {
+    const existingByEmail = await prisma.user.findUnique({ where: { email: data.email } });
+
+    const user = await prisma.user.upsert({
+      where: { email: data.email },
+      create: {
+        name: data.name,
+        email: data.email,
+        provider: data.provider,
+        providerId: data.providerId,
+        avatar: data.avatar,
+        isEmailVerified: true,
+        isActive: true,
+      },
+      update: {
+        name: existingByEmail?.name || data.name,
+        provider: data.provider,
+        providerId: data.providerId,
+        avatar: data.avatar,
+        isEmailVerified: true,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+      },
+    });
+
+    if (!user.isActive) {
+      return {
+        success: false,
+        message: 'Account is deactivated. Please contact support.',
+      };
+    }
+
+    const tokens = await TokenService.generateTokenPair({
+      userId: user.id,
+      email: user.email,
+      role: user.role as 'STUDENT' | 'ADMIN',
+    });
+
+    return {
+      success: true,
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      tokens,
+    };
+  }
+
   /**
    * Register new user
    */
@@ -105,7 +167,7 @@ export class AuthService {
         }
 
         // Generate tokens
-        const tokens = await TokenService.generateTokens({
+        const tokens = await TokenService.generateTokenPair({
           userId: adminUser.id,
           email: adminUser.email,
           role: adminUser.role,

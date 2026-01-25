@@ -2,12 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { TokenService } from '../services/token.service.js';
 import { JWTPayload } from '../types/auth.types.js';
 
-// Extend Express Request type
+// Extend Express Passport user type
 declare global {
   namespace Express {
-    interface Request {
-      user?: JWTPayload;
-    }
+    interface User extends JWTPayload {}
   }
 }
 

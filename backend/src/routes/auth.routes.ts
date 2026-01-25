@@ -1,10 +1,27 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
 import { AuthService } from '../services/auth.service.js';
 import { authenticate } from '../middleware/auth.middleware.js';
 import { authRateLimiter } from '../middleware/security.js';
 
 const router = express.Router();
+
+const setAuthCookies = (res: express.Response, tokens: { accessToken: string; refreshToken: string }) => {
+  res.cookie('accessToken', tokens.accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 15 * 60 * 1000,
+  });
+
+  res.cookie('refreshToken', tokens.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+};
 
 // Cookie parser middleware
 router.use(cookieParser());
@@ -39,19 +56,7 @@ router.post('/register', authRateLimiter, async (req, res) => {
     }
 
     // Set http-only cookies
-    res.cookie('accessToken', result.tokens!.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    res.cookie('refreshToken', result.tokens!.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    setAuthCookies(res, result.tokens!);
 
     res.status(201).json({
       success: true,
@@ -90,19 +95,7 @@ router.post('/login', authRateLimiter, async (req, res) => {
     }
 
     // Set http-only cookies
-    res.cookie('accessToken', result.tokens!.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    res.cookie('refreshToken', result.tokens!.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    setAuthCookies(res, result.tokens!);
 
     res.json({
       success: true,
@@ -222,5 +215,90 @@ router.get('/me', authenticate, async (req, res) => {
     });
   }
 });
+
+router.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    session: false,
+  })
+);
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', {
+    session: false,
+    failureRedirect: process.env.OAUTH_FAILURE_REDIRECT || '/',
+  }),
+  async (req, res) => {
+    const profile: any = req.user;
+    const email = profile?.emails?.[0]?.value;
+    const providerId = profile?.id;
+    const name = profile?.displayName || email;
+    const avatar = profile?.photos?.[0]?.value;
+
+    if (!email || !providerId) {
+      return res.redirect(process.env.OAUTH_FAILURE_REDIRECT || '/');
+    }
+
+    const result = await AuthService.loginWithOAuth({
+      provider: 'GOOGLE',
+      providerId: String(providerId),
+      email: String(email),
+      name: String(name),
+      avatar: avatar ? String(avatar) : undefined,
+    });
+
+    if (!result.success || !result.tokens) {
+      return res.redirect(process.env.OAUTH_FAILURE_REDIRECT || '/');
+    }
+
+    setAuthCookies(res, result.tokens);
+
+    return res.redirect(process.env.OAUTH_SUCCESS_REDIRECT || process.env.FRONTEND_URL || '/');
+  }
+);
+
+router.get(
+  '/github',
+  passport.authenticate('github', {
+    session: false,
+  })
+);
+
+router.get(
+  '/github/callback',
+  passport.authenticate('github', {
+    session: false,
+    failureRedirect: process.env.OAUTH_FAILURE_REDIRECT || '/',
+  }),
+  async (req, res) => {
+    const profile: any = req.user;
+    const email = profile?.emails?.[0]?.value;
+    const providerId = profile?.id;
+    const name = profile?.displayName || profile?.username || email;
+    const avatar = profile?.photos?.[0]?.value;
+
+    if (!email || !providerId) {
+      return res.redirect(process.env.OAUTH_FAILURE_REDIRECT || '/');
+    }
+
+    const result = await AuthService.loginWithOAuth({
+      provider: 'GITHUB',
+      providerId: String(providerId),
+      email: String(email),
+      name: String(name),
+      avatar: avatar ? String(avatar) : undefined,
+    });
+
+    if (!result.success || !result.tokens) {
+      return res.redirect(process.env.OAUTH_FAILURE_REDIRECT || '/');
+    }
+
+    setAuthCookies(res, result.tokens);
+
+    return res.redirect(process.env.OAUTH_SUCCESS_REDIRECT || process.env.FRONTEND_URL || '/');
+  }
+);
 
 export default router;
