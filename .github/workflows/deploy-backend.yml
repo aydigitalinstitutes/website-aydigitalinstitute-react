@@ -1,0 +1,82 @@
+name: Deploy Backend
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        run: npm install --production=false
+      
+      - name: Run tests
+        run: |
+          echo "Running backend tests..."
+          # Add your test command here when tests are added
+          # npm test
+        continue-on-error: true
+      
+      - name: Build application
+        run: |
+          echo "Backend is ready for deployment"
+          # For Node.js apps, you might not need a build step
+          # But you can add any pre-deployment steps here
+      
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          cp -r *.js config models routes middleware utils deploy/
+          cp package.json deploy/
+          cp package-lock.json deploy/ || true
+          cd deploy && npm install --production
+          tar -czf ../backend-deploy.tar.gz .
+      
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-deploy-${{ github.sha }}
+          path: backend-deploy.tar.gz
+          retention-days: 30
+      
+      - name: Deploy to Railway (example)
+        if: github.event.inputs.environment == 'production'
+        run: |
+          echo "Deploy to Railway or your preferred platform"
+          # Example: railway up --service backend
+          # You would need to set up Railway CLI and tokens
+      
+      - name: Deploy to Render (example)
+        if: github.event.inputs.environment == 'staging'
+        run: |
+          echo "Deploy to Render or your preferred platform"
+          # Example deployment commands for your hosting platform

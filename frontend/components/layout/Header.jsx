@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import { FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { scrollToSection } from '../../utils/helpers';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const menuItems = ['Home', 'Courses', 'About', 'Why Us', 'Reviews', 'Contact'];
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setIsMenuOpen(false);
+  };
 
   const handleMenuClick = (item) => {
     const sectionId = item === 'Home' ? 'home' : item.toLowerCase().replace(' ', '-');
@@ -39,8 +49,21 @@ const Header = () => {
 
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="btn-secondary text-sm">Get Brochure</button>
-            <button className="btn-primary text-sm">Enroll Now</button>
+            {isAuthenticated ? (
+              <>
+                <Link to="/dashboard" className="btn-secondary text-sm flex items-center gap-2">
+                  <FaUser /> {user?.name?.split(' ')[0] || 'Dashboard'}
+                </Link>
+                <button onClick={handleLogout} className="btn-primary text-sm flex items-center gap-2">
+                  <FaSignOutAlt /> Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="btn-secondary text-sm">Login</Link>
+                <Link to="/register" className="btn-primary text-sm">Sign Up</Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -66,8 +89,40 @@ const Header = () => {
                 </button>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
-                <button className="btn-secondary text-sm w-full">Get Brochure</button>
-                <button className="btn-primary text-sm w-full">Enroll Now</button>
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="btn-secondary text-sm w-full flex items-center justify-center gap-2"
+                    >
+                      <FaUser /> Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="btn-primary text-sm w-full flex items-center justify-center gap-2"
+                    >
+                      <FaSignOutAlt /> Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="btn-secondary text-sm w-full"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="btn-primary text-sm w-full"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>

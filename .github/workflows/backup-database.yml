@@ -1,0 +1,57 @@
+name: Database Backup
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    name: Backup PostgreSQL Database
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PostgreSQL client
+        uses: ankane/setup-postgres@v1
+        with:
+          postgresql-version: '15'
+      
+      - name: Create backup
+        run: |
+          mkdir -p backups
+          timestamp=$(date +%Y%m%d_%H%M%S)
+          PGPASSWORD=${{ secrets.DB_PASSWORD }} pg_dump \
+            -h ${{ secrets.DB_HOST }} \
+            -U ${{ secrets.DB_USER }} \
+            -d ${{ secrets.DB_NAME }} \
+            -F c \
+            -f backups/aydigital_backup_$timestamp.dump
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+      
+      - name: Compress backup
+        run: |
+          cd backups
+          tar -czf aydigital_backup_$(date +%Y%m%d_%H%M%S).tar.gz *.dump
+          rm *.dump
+      
+      - name: Upload backup to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: database-backup-${{ github.run_number }}
+          path: backups/*.tar.gz
+          retention-days: 30
+      
+      - name: Upload to GitHub Releases (optional)
+        if: github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: backups/*.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

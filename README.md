@@ -1,80 +1,199 @@
-# AY Digital Institute Website
+# AY Digital Institute - Full Stack Application
 
-A modern, responsive website for AY Digital Institute built with React and Tailwind CSS.
+A complete full-stack application for AY Digital Institute with React frontend and Node.js/Express backend.
+
+## Project Structure
+
+```
+aydigital/
+├── frontend/          # React frontend application
+│   ├── components/   # React components
+│   ├── pages/        # Page components
+│   ├── context/      # React context (Auth)
+│   ├── data/        # Static data
+│   └── utils/        # Utility functions
+├── backend/          # Node.js/Express backend
+│   ├── config/      # Configuration files
+│   ├── models/      # Database models
+│   ├── routes/      # API routes
+│   ├── middleware/  # Express middleware
+│   └── utils/        # Utility functions
+└── package.json      # Frontend dependencies
+```
 
 ## Features
 
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
-- **Modern UI**: Clean, professional design with smooth animations
-- **Smooth Scrolling**: Navigation with smooth scroll to sections
-- **Contact Form**: Interactive contact form for inquiries
-- **Course Showcase**: Beautiful course cards with detailed information
-- **Student Reviews**: Testimonials section to build trust
+### Frontend
+- ✅ Responsive React website
+- ✅ User Authentication (Login/Register)
+- ✅ Protected Routes
+- ✅ Dashboard for logged-in users
+- ✅ 22 Courses with NIELIT certifications
+- ✅ Contact form
+- ✅ WhatsApp floating button
+- ✅ Smooth animations
 
-## Sections
+### Backend
+- ✅ RESTful API with Express.js
+- ✅ JWT Authentication
+- ✅ User Registration & Login
+- ✅ Protected API routes
+- ✅ PostgreSQL database
+- ✅ User profile management
 
-1. **Header**: Sticky navigation with logo, menu, and action buttons
-2. **Hero**: Eye-catching hero section with stats and CTAs
-3. **Courses**: 6 course cards with detailed descriptions
-4. **About**: Information about the institute and key features
-5. **Why Choose Us**: 5 compelling reasons to choose the institute
-6. **Reviews**: Student testimonials with ratings
-7. **Contact**: Contact information and inquiry form
-8. **Footer**: Quick links and social media
+## Setup Instructions
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-
-### Installation
+### Frontend Setup
 
 1. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Start the development server:
+2. Create `.env` file in `frontend/`:
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+3. Start development server:
 ```bash
 npm run dev
 ```
 
-3. Open your browser and navigate to `http://localhost:5173`
+### Backend Setup
 
-### Build for Production
-
+1. Navigate to backend folder:
 ```bash
-npm run build
+cd backend
 ```
 
-The built files will be in the `dist` directory.
+2. Install dependencies:
+```bash
+npm install
+```
 
-## Customization
+3. Create `.env` file from example:
+```bash
+cp .env.example .env
+```
 
-### Update Contact Information
+4. Update `.env` with your configuration:
+```env
+PORT=5000
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=aydigital
+DB_USER=postgres
+DB_PASSWORD=postgres
+JWT_SECRET=your-secret-key-here
+NODE_ENV=development
+```
 
-Edit `src/components/Contact.jsx` to update:
-- Phone number
-- Email address
-- Physical address
-- Business hours
+5. Create PostgreSQL database:
+```sql
+CREATE DATABASE aydigital;
+```
 
-### Update Course List
+5. Start backend server:
+```bash
+# Development (with nodemon)
+npm run dev
 
-Edit `src/components/Courses.jsx` to modify courses or add new ones.
+# Production
+npm start
+```
 
-### Update Social Media Links
+## API Endpoints
 
-Edit `src/components/Footer.jsx` to add your social media profile URLs.
+### Authentication
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
 
-## Technologies Used
+### User (Protected)
+- `GET /api/user/profile` - Get user profile
+- `PUT /api/user/profile` - Update user profile
 
-- **React 18**: UI library
-- **Vite**: Build tool and dev server
-- **Tailwind CSS**: Utility-first CSS framework
-- **React Icons**: Icon library
+## Frontend Routes
+
+- `/` - Home page
+- `/login` - Login page
+- `/register` - Registration page
+- `/dashboard` - User dashboard (Protected)
+
+## Technologies
+
+### Frontend
+- React 18
+- React Router DOM
+- Tailwind CSS
+- Vite
+- React Icons
+
+### Backend
+- Node.js
+- Express.js
+- PostgreSQL (Sequelize ORM)
+- JWT (jsonwebtoken)
+- bcryptjs
+- express-validator
+
+## Development
+
+Run both frontend and backend simultaneously:
+
+**Terminal 1 (Frontend):**
+```bash
+npm run dev
+```
+
+**Terminal 2 (Backend):**
+```bash
+cd backend
+npm run dev
+```
+
+## GitHub Actions CI/CD
+
+This project includes GitHub Actions workflows for automated CI/CD:
+
+### Available Workflows
+- **CI/CD Pipeline**: Automated testing, building, and frontend deployment
+- **Database Migration**: Run database schema updates
+- **Backend Deployment**: Deploy backend to staging/production
+- **Database Backup**: Automated daily backups (runs at 2 AM UTC)
+
+### Setup GitHub Actions Secrets
+
+Go to your repository → Settings → Secrets and variables → Actions, and add:
+
+**Frontend:**
+- `VERCEL_TOKEN` - Vercel API token
+- `VERCEL_ORG_ID` - Vercel organization ID
+- `VERCEL_PROJECT_ID` - Vercel project ID
+- `VITE_API_URL` - Production API URL
+
+**Backend/Database:**
+- `DB_HOST` - PostgreSQL host
+- `DB_PORT` - PostgreSQL port (usually 5432)
+- `DB_NAME` - Database name
+- `DB_USER` - Database username
+- `DB_PASSWORD` - Database password
+- `JWT_SECRET` - JWT secret key
+
+See `.github/README.md` for detailed workflow documentation.
+
+## Production Deployment
+
+### Frontend
+- Build: `npm run build`
+- Deploy to Vercel/Netlify
+- GitHub Actions will auto-deploy on push to main branch
+
+### Backend
+- Deploy to Heroku/Railway/Render
+- Set environment variables
+- Connect PostgreSQL database (local or cloud like Supabase, Neon, etc.)
+- Use GitHub Actions workflow for automated deployment
 
 ## License
 

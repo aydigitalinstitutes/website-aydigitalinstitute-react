@@ -1,0 +1,82 @@
+name: Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to migrate'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'backend/models/**'
+      - 'backend/config/database.js'
+
+jobs:
+  migrate:
+    name: Run Database Migrations
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Setup PostgreSQL
+        uses: ankane/setup-postgres@v1
+        with:
+          postgresql-version: '15'
+      
+      - name: Create database
+        run: |
+          psql -U postgres -c "CREATE DATABASE aydigital;"
+        env:
+          PGPASSWORD: postgres
+      
+      - name: Run migrations
+        run: |
+          npm run dev &
+          sleep 10
+          # Sequelize will auto-sync in development mode
+          # In production, you would use migrations
+          pkill -f "node.*server.js" || true
+        env:
+          NODE_ENV: ${{ github.event.inputs.environment || 'development' }}
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: aydigital
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      
+      - name: Verify migration
+        run: |
+          PGPASSWORD=postgres psql -U postgres -d aydigital -c "\dt"
+      
+      - name: Upload migration logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-logs
+          path: |
+            backend/logs/*.log
+          if-no-files-found: ignore

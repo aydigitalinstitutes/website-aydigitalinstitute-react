@@ -1,32 +1,53 @@
 import React from 'react';
-import Header from './components/layout/Header';
-import Footer from './components/layout/Footer';
-import Hero from './components/sections/Hero';
-import Courses from './components/sections/Courses';
-import About from './components/sections/About';
-import WhyChooseUs from './components/sections/WhyChooseUs';
-import Reviews from './components/sections/Reviews';
-import Contact from './components/sections/Contact';
-import WhatsAppButton from './components/WhatsAppButton';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import { useScrollAnimation } from './utils/useScrollAnimation';
 
-function App() {
+// Layout Components
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import WhatsAppButton from './components/WhatsAppButton';
+
+// Page Components
+import Home from './pages/Home';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import Dashboard from './components/auth/Dashboard';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+function AppContent() {
   useScrollAnimation();
 
   return (
     <div className="App">
       <Header />
-      <main>
-        <Hero />
-        <Courses />
-        <About />
-        <WhyChooseUs />
-        <Reviews />
-        <Contact />
-      </main>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
       <Footer />
       <WhatsAppButton />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </Router>
   );
 }
 
