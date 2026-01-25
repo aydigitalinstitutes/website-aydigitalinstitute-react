@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "vitest",
+    "test": "npm run test:web && npm run test:admin && npm run test:api",
+    "test:web": "vitest run",
+    "test:admin": "npm -C admin run test",
+    "test:api": "npm -C api run test",
     "preview": "vite preview",
     "prepare": "husky"
   },
