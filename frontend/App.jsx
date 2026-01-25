@@ -13,6 +13,7 @@ import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import AdminLogin from './components/auth/AdminLogin';
 import Dashboard from './components/auth/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AnimatedPage from './components/common/AnimatedPage';
@@ -47,6 +48,14 @@ function AppContent() {
             element={
               <AnimatedPage>
                 <Register />
+              </AnimatedPage>
+            }
+          />
+          <Route
+            path="/admin-login"
+            element={
+              <AnimatedPage>
+                <AdminLogin />
               </AnimatedPage>
             }
           />

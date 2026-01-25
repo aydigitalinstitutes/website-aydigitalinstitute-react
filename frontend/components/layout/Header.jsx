@@ -58,12 +58,7 @@ const Header = () => {
                   <FaSignOutAlt /> Logout
                 </button>
               </>
-            ) : (
-              <>
-                <Link to="/login" className="btn-secondary text-sm">Login</Link>
-                <Link to="/register" className="btn-primary text-sm">Sign Up</Link>
-              </>
-            )}
+            ) : null}
           </div>
 
           {/* Mobile Menu Button */}
@@ -105,24 +100,7 @@ const Header = () => {
                       <FaSignOutAlt /> Logout
                     </button>
                   </>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="btn-secondary text-sm w-full"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="btn-primary text-sm w-full"
-                    >
-                      Sign Up
-                    </Link>
-                  </>
-                )}
+                ) : null}
               </div>
             </nav>
           </div>
