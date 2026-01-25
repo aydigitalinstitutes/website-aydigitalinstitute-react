@@ -5,6 +5,7 @@ on:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master, develop ]
+  workflow_dispatch:
 
 jobs:
   # Frontend Build & Test
@@ -81,8 +82,8 @@ jobs:
       
       - name: Run database migrations
         run: |
-          # Create test database
-          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE aydigital_test;"
+          # Create test database (ignore error if it already exists)
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE aydigital_test;" || true
         env:
           DB_HOST: localhost
           DB_PORT: 5432
