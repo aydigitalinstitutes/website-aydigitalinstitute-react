@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaLock } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { loginSchema, type LoginFormData } from '../../lib/zod-schemas';
+import { loginSchema, type LoginFormData } from '../../src/lib/zod-schemas';
 import AnimatedButton from '../common/AnimatedButton';
 import { fadeInUp, staggerContainer, staggerItem, scaleIn } from '../../utils/animations';
-import api from '../../lib/axios';
+import api from '../../src/lib/axios';
 
 interface LoginFormProps {
   onSuccess?: () => void;

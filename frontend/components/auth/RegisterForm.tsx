@@ -4,10 +4,10 @@ import { motion } from 'framer-motion';
 import { FaEnvelope, FaLock, FaUser, FaPhone } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { registerSchema, type RegisterFormData } from '../../lib/zod-schemas';
+import { registerSchema, type RegisterFormData } from '../../src/lib/zod-schemas';
 import AnimatedButton from '../common/AnimatedButton';
 import { fadeInUp, staggerContainer, staggerItem, scaleIn } from '../../utils/animations';
-import api from '../../lib/axios';
+import api from '../../src/lib/axios';
 import { coursesData } from '../../data/courses';
 
 interface RegisterFormProps {
