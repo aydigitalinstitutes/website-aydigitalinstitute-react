@@ -5,7 +5,9 @@ export const loginSchema = z.object({
   email: z
     .string()
     .min(1, 'Email is required')
-    .email('Invalid email address'),
+    .refine((val) => val === 'admin' || z.string().email().safeParse(val).success, {
+      message: 'Invalid email address',
+    }),
   password: z
     .string()
     .min(1, 'Password is required')
