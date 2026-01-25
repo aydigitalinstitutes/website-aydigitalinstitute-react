@@ -7,3 +7,5 @@ backend/build/
 # Logs
 *.log
 npm-debug.log*
+
+/generated/prisma
