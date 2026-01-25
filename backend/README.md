@@ -25,9 +25,9 @@ cp .env.example .env
 ```
 
 3. Update `.env` with your configuration:
-   - MongoDB connection string
-   - JWT secret key
-   - Port number
+   - `DATABASE_URL`
+   - `JWT_SECRET` and `REFRESH_TOKEN_SECRET`
+   - `FRONTEND_URL` (CORS)
 
 4. Start the server:
 ```bash
@@ -50,13 +50,12 @@ npm start
 
 ## Environment Variables
 
-- `PORT` - Server port (default: 5000)
-- `DB_HOST` - PostgreSQL host (default: localhost)
-- `DB_PORT` - PostgreSQL port (default: 5432)
-- `DB_NAME` - Database name (default: aydigital)
-- `DB_USER` - PostgreSQL username (default: postgres)
-- `DB_PASSWORD` - PostgreSQL password
-- `JWT_SECRET` - Secret key for JWT tokens
+- `PORT` - Server port (default: 5001)
+- `DATABASE_URL` - PostgreSQL connection string
+- `JWT_SECRET` - Access token signing secret
+- `REFRESH_TOKEN_SECRET` - Refresh token signing secret
+- `FRONTEND_URL` - Allowed origin for CORS
+- `API_BASE_URL` - Public base URL (used for OAuth callback URLs)
 - `NODE_ENV` - Environment (development/production)
 
 ## Database Setup
@@ -68,4 +67,4 @@ CREATE DATABASE aydigital;
 ```
 
 3. Update `.env` with your PostgreSQL credentials
-4. The application will automatically create tables on first run
+4. Apply schema changes using Prisma (`prisma db push` or migrations if introduced)

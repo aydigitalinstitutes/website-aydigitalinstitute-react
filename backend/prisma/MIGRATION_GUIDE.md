@@ -70,12 +70,7 @@ npx prisma studio
 
 ## 🔄 Migrating from Sequelize
 
-The old Sequelize models are still in `backend/models/` but are **not used** by the new system.
-
-**After Prisma migration is complete:**
-1. Test the new auth system
-2. Verify all endpoints work
-3. Remove old Sequelize code (optional cleanup)
+The legacy Sequelize implementation has been removed from the repository. Prisma is the single source of truth for the database schema.
 
 ---
 
