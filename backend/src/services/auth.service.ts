@@ -1,9 +1,7 @@
-import { PrismaClient } from '../../generated/prisma/index.js';
+import { prisma } from '../prisma.js';
 import bcrypt from 'bcryptjs';
 import { TokenService } from './token.service.js';
 import { AuthResponse, JWTPayload } from '../types/auth.types.js';
-
-const prisma = new PrismaClient();
 
 export class AuthService {
   /**

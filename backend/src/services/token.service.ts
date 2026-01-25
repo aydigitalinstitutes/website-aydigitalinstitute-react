@@ -1,11 +1,9 @@
-import jwt from 'jsonwebtoken';
+import jwt, { Secret } from 'jsonwebtoken';
 import { JWTPayload, TokenPair } from '../types/auth.types.js';
-import { PrismaClient } from '../../generated/prisma/index.js';
+import { prisma } from '../prisma.js';
 import crypto from 'crypto';
 
-const prisma = new PrismaClient();
-
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const ACCESS_TOKEN_SECRET: Secret = process.env.JWT_SECRET || 'your-secret-key';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your-refresh-secret-key';
 const ACCESS_TOKEN_EXPIRY = process.env.ACCESS_TOKEN_EXPIRY || '15m';
 const REFRESH_TOKEN_EXPIRY = process.env.REFRESH_TOKEN_EXPIRY || '7d';
@@ -15,7 +13,8 @@ export class TokenService {
    * Generate access token
    */
   static generateAccessToken(payload: JWTPayload): string {
-    return jwt.sign(payload, ACCESS_TOKEN_SECRET, {
+    // @ts-ignore
+    return jwt.sign(payload, ACCESS_TOKEN_SECRET as string, {
       expiresIn: ACCESS_TOKEN_EXPIRY,
     });
   }

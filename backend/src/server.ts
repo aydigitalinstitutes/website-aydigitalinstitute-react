@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import { PrismaClient } from '../generated/prisma/index.js';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+import { prisma } from './prisma.js';
 import { securityHeaders, corsOptions, apiRateLimiter } from './middleware/security.js';
 import authRoutes from './routes/auth.routes.js';
 
@@ -11,7 +14,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const prisma = new PrismaClient();
 
 // Security Middleware
 app.use(securityHeaders);
