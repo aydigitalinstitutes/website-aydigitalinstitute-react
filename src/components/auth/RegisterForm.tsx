@@ -40,8 +40,8 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         }
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.';
-      const errors = error.response?.data?.errors;
+      const message = error.response?.data?.error?.message || error.response?.data?.message || 'Registration failed. Please try again.';
+      const errors = error.response?.data?.error?.details || error.response?.data?.errors;
       
       if (errors) {
         // Set field-specific errors

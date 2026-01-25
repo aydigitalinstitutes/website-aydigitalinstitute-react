@@ -33,7 +33,7 @@ const AdminLoginForm = ({ onSuccess }: AdminLoginFormProps) => {
         }
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Admin login failed. Please try again.';
+      const message = error.response?.data?.error?.message || error.response?.data?.message || 'Admin login failed. Please try again.';
       setError('root', { message });
     }
   };

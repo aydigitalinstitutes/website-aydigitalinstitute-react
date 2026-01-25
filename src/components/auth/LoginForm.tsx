@@ -37,7 +37,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
         }
       }
     } catch (error: any) {
-      const message = error.response?.data?.message || 'Login failed. Please try again.';
+      const message = error.response?.data?.error?.message || error.response?.data?.message || 'Login failed. Please try again.';
       setError('root', { message });
     }
   };

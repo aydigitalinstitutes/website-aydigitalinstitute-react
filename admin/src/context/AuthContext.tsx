@@ -4,7 +4,12 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import api from '../lib/axios';
 
 type ApiErrorResponse = {
-  message?: string;
+  success: false;
+  error?: {
+    message: string;
+    statusCode: number;
+  };
+  message?: string; // Fallback for legacy
 };
 
 export type AuthUser = {
@@ -78,9 +83,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       const axiosError = error as AxiosError<ApiErrorResponse>;
+      const message = 
+        axiosError.response?.data?.error?.message ?? 
+        axiosError.response?.data?.message ?? 
+        'Login failed';
+        
       return {
         success: false,
-        message: axiosError.response?.data?.message ?? 'Login failed',
+        message,
       };
     }
   };
