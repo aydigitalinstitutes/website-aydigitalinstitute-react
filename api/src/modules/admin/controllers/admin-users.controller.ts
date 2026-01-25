@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { Roles } from '../../../auth/roles.decorator';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
@@ -17,12 +25,19 @@ export class AdminUsersController {
     @Query('limit') limit?: string,
     @Query('search') search?: string,
     @Query('role') role?: 'USER' | 'ADMIN',
-    @Query('isActive') isActive?: string
+    @Query('isActive') isActive?: string,
   ) {
     const pageNum = Math.max(1, Number(page ?? 1));
     const limitNum = Math.min(100, Math.max(1, Number(limit ?? 25)));
-    const isActiveBool = isActive === undefined ? undefined : isActive === 'true';
-    return this.service.list({ page: pageNum, limit: limitNum, search, role, isActive: isActiveBool });
+    const isActiveBool =
+      isActive === undefined ? undefined : isActive === 'true';
+    return this.service.list({
+      page: pageNum,
+      limit: limitNum,
+      search,
+      role,
+      isActive: isActiveBool,
+    });
   }
 
   @Patch(':id')

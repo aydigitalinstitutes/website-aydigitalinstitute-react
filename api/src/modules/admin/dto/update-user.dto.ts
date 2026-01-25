@@ -9,4 +9,3 @@ export class UpdateUserDto {
   @IsIn(['USER', 'ADMIN'])
   role?: 'USER' | 'ADMIN';
 }
-

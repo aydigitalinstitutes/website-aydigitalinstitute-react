@@ -8,4 +8,3 @@ import { AdminUsersRepository } from './repositories/admin-users.repository';
   providers: [AdminUsersService, AdminUsersRepository],
 })
 export class AdminModule {}
-

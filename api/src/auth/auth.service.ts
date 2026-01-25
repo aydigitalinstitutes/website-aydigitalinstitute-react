@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
@@ -6,7 +10,11 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import { UsersRepository } from './repositories/users.repository';
 import { RefreshTokensRepository } from './repositories/refresh-tokens.repository';
-import { JwtAccessPayload, JwtRefreshPayload, OAuthProfile } from './types/auth.types';
+import {
+  JwtAccessPayload,
+  JwtRefreshPayload,
+  OAuthProfile,
+} from './types/auth.types';
 
 export type AuthResult = {
   user: {
@@ -25,7 +33,7 @@ export class AuthService {
     private readonly config: ConfigService,
     private readonly jwt: JwtService,
     private readonly usersRepo: UsersRepository,
-    private readonly refreshRepo: RefreshTokensRepository
+    private readonly refreshRepo: RefreshTokensRepository,
   ) {}
 
   private accessSecret(): string {
@@ -41,14 +49,20 @@ export class AuthService {
   }
 
   private refreshTtlSeconds(): number {
-    return Number(this.config.get<string>('JWT_REFRESH_TTL_SECONDS') ?? 60 * 60 * 24 * 7);
+    return Number(
+      this.config.get<string>('JWT_REFRESH_TTL_SECONDS') ?? 60 * 60 * 24 * 7,
+    );
   }
 
   getOAuthSuccessRedirect(): string {
     return this.config.get<string>('OAUTH_SUCCESS_REDIRECT') ?? '/';
   }
 
-  async register(dto: { email: string; name: string; password: string }): Promise<AuthResult> {
+  async register(dto: {
+    email: string;
+    name: string;
+    password: string;
+  }): Promise<AuthResult> {
     const existing = await this.usersRepo.findByEmail(dto.email);
     if (existing) {
       throw new ForbiddenException('Email is already registered');
@@ -152,9 +166,12 @@ export class AuthService {
     }
 
     try {
-      const payload = await this.jwt.verifyAsync<JwtRefreshPayload>(refreshToken, {
-        secret: this.refreshSecret(),
-      });
+      const payload = await this.jwt.verifyAsync<JwtRefreshPayload>(
+        refreshToken,
+        {
+          secret: this.refreshSecret(),
+        },
+      );
       if (payload.type === 'refresh' && payload.sub && payload.tokenId) {
         await this.refreshRepo.revoke(payload.sub, payload.tokenId);
       }
@@ -164,7 +181,8 @@ export class AuthService {
   }
 
   setAuthCookies(res: Response, result: AuthResult): void {
-    const secure = (this.config.get<string>('NODE_ENV') ?? 'development') === 'production';
+    const secure =
+      (this.config.get<string>('NODE_ENV') ?? 'development') === 'production';
 
     res.cookie('accessToken', result.accessToken, {
       httpOnly: true,
@@ -186,7 +204,9 @@ export class AuthService {
     res.clearCookie('refreshToken');
   }
 
-  private async issueTokensForUser(user: AuthResult['user']): Promise<AuthResult> {
+  private async issueTokensForUser(
+    user: AuthResult['user'],
+  ): Promise<AuthResult> {
     const accessPayload: JwtAccessPayload = {
       sub: user.id,
       email: user.email,
@@ -220,4 +240,3 @@ export class AuthService {
     };
   }
 }
-

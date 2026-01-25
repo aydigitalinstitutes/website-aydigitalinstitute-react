@@ -30,14 +30,29 @@ import { initSentry } from './shared/sentry';
             new winston.transports.Console({
               format:
                 nodeEnv === 'production'
-                  ? winston.format.combine(winston.format.timestamp(), winston.format.json())
+                  ? winston.format.combine(
+                      winston.format.timestamp(),
+                      winston.format.json(),
+                    )
                   : winston.format.combine(
                       winston.format.colorize(),
                       winston.format.timestamp(),
                       winston.format.printf((info) => {
+                        const timestamp =
+                          typeof info.timestamp === 'string'
+                            ? info.timestamp
+                            : new Date().toISOString();
+                        const level =
+                          typeof info.level === 'string'
+                            ? info.level
+                            : String(info.level);
+                        const message =
+                          typeof info.message === 'string'
+                            ? info.message
+                            : String(info.message);
                         const meta = info.meta ? JSON.stringify(info.meta) : '';
-                        return `${info.timestamp} ${info.level}: ${info.message}${meta ? ` ${meta}` : ''}`;
-                      })
+                        return `${timestamp} ${level}: ${message}${meta ? ` ${meta}` : ''}`;
+                      }),
                     ),
             }),
           ],

@@ -10,4 +10,3 @@ export class HealthController {
     return this.service.health();
   }
 }
-

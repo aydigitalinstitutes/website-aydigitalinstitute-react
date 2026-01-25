@@ -10,9 +10,11 @@ describe('AppController (e2e)', () => {
 
   beforeEach(async () => {
     process.env.GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? 'test';
-    process.env.GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? 'test';
+    process.env.GOOGLE_CLIENT_SECRET =
+      process.env.GOOGLE_CLIENT_SECRET ?? 'test';
     process.env.GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID ?? 'test';
-    process.env.GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET ?? 'test';
+    process.env.GITHUB_CLIENT_SECRET =
+      process.env.GITHUB_CLIENT_SECRET ?? 'test';
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],

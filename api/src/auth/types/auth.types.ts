@@ -17,4 +17,3 @@ export type OAuthProfile = {
   name: string;
   avatarUrl?: string;
 };
-

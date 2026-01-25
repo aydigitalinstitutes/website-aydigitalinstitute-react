@@ -31,4 +31,3 @@ describe('RefreshTokensRepository', () => {
     expect(redis.del).toHaveBeenCalledWith('refresh:u1:t1');
   });
 });
-

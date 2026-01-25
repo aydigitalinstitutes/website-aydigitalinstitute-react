@@ -7,4 +7,3 @@ import { MetricsService } from './metrics.service';
   providers: [MetricsService],
 })
 export class MetricsModule {}
-

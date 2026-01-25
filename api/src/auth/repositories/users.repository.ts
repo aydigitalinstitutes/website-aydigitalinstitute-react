@@ -27,7 +27,9 @@ export class UsersRepository {
 
   upsertOAuth(profile: OAuthProfile) {
     return this.prisma.$transaction(async (tx) => {
-      const existing = await tx.user.findUnique({ where: { email: profile.email } });
+      const existing = await tx.user.findUnique({
+        where: { email: profile.email },
+      });
       if (existing) {
         return tx.user.update({
           where: { id: existing.id },
@@ -53,4 +55,3 @@ export class UsersRepository {
     });
   }
 }
-

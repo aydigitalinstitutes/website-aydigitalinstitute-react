@@ -23,4 +23,3 @@ export class MetricsService {
     return client.register.metrics();
   }
 }
-

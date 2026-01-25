@@ -18,7 +18,9 @@ export class AdminUsersRepository {
 
     const where: any = {
       ...(params.role ? { role: params.role } : {}),
-      ...(typeof params.isActive === 'boolean' ? { isActive: params.isActive } : {}),
+      ...(typeof params.isActive === 'boolean'
+        ? { isActive: params.isActive }
+        : {}),
       ...(search
         ? {
             OR: [
@@ -54,11 +56,16 @@ export class AdminUsersRepository {
     return { total, page, limit, data };
   }
 
-  async update(id: string, data: { isActive?: boolean; role?: 'USER' | 'ADMIN' }) {
+  async update(
+    id: string,
+    data: { isActive?: boolean; role?: 'USER' | 'ADMIN' },
+  ) {
     return this.prisma.user.update({
       where: { id },
       data: {
-        ...(typeof data.isActive === 'boolean' ? { isActive: data.isActive } : {}),
+        ...(typeof data.isActive === 'boolean'
+          ? { isActive: data.isActive }
+          : {}),
         ...(data.role ? { role: data.role } : {}),
       },
       select: {
@@ -72,4 +79,3 @@ export class AdminUsersRepository {
     });
   }
 }
-

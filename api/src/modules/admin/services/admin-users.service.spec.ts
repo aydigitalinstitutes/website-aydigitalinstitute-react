@@ -13,7 +13,12 @@ describe('AdminUsersService', () => {
   });
 
   it('wraps list result', async () => {
-    repo.list.mockResolvedValueOnce({ total: 1, page: 1, limit: 25, data: [{ id: 'u1' }] });
+    repo.list.mockResolvedValueOnce({
+      total: 1,
+      page: 1,
+      limit: 25,
+      data: [{ id: 'u1' }],
+    });
     const res = await service.list({ page: 1, limit: 25 });
     expect(res.success).toBe(true);
     expect(res.total).toBe(1);
@@ -26,4 +31,3 @@ describe('AdminUsersService', () => {
     expect(res.user.id).toBe('u1');
   });
 });
-

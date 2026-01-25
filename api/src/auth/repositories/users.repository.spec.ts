@@ -23,18 +23,22 @@ describe('UsersRepository', () => {
 
   it('creates local user', async () => {
     prisma.user.create.mockResolvedValueOnce({ id: 'u1' });
-    await expect(repo.createLocal({ email: 'a@b.com', name: 'A', passwordHash: 'x' })).resolves.toEqual({ id: 'u1' });
+    await expect(
+      repo.createLocal({ email: 'a@b.com', name: 'A', passwordHash: 'x' }),
+    ).resolves.toEqual({ id: 'u1' });
   });
 
   it('upserts oauth by updating existing user', async () => {
     prisma.$transaction.mockImplementation(async (fn: any) =>
       fn({
         user: {
-          findUnique: jest.fn().mockResolvedValue({ id: 'u1', name: 'Existing' }),
+          findUnique: jest
+            .fn()
+            .mockResolvedValue({ id: 'u1', name: 'Existing' }),
           update: jest.fn().mockResolvedValue({ id: 'u1', provider: 'GOOGLE' }),
           create: jest.fn(),
         },
-      })
+      }),
     );
 
     const result = await repo.upsertOAuth({
@@ -56,7 +60,7 @@ describe('UsersRepository', () => {
           update: jest.fn(),
           create: jest.fn().mockResolvedValue({ id: 'u2', provider: 'GITHUB' }),
         },
-      })
+      }),
     );
 
     const result = await repo.upsertOAuth({
@@ -69,4 +73,3 @@ describe('UsersRepository', () => {
     expect(result).toEqual({ id: 'u2', provider: 'GITHUB' });
   });
 });
-

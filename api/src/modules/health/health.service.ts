@@ -4,7 +4,10 @@ import { RedisService } from '../../redis/redis.service';
 
 @Injectable()
 export class HealthService {
-  constructor(private readonly prisma: PrismaService, private readonly redis: RedisService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redis: RedisService,
+  ) {}
 
   async health() {
     const startedAt = Date.now();
@@ -24,4 +27,3 @@ export class HealthService {
     };
   }
 }
-

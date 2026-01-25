@@ -33,4 +33,3 @@ describe('AdminUsersRepository', () => {
     expect(user).toEqual({ id: 'u1', role: 'ADMIN' });
   });
 });
-

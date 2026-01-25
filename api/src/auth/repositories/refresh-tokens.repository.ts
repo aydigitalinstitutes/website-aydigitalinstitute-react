@@ -9,7 +9,11 @@ export class RefreshTokensRepository {
     return `refresh:${userId}:${tokenId}`;
   }
 
-  async store(userId: string, tokenId: string, ttlSeconds: number): Promise<void> {
+  async store(
+    userId: string,
+    tokenId: string,
+    ttlSeconds: number,
+  ): Promise<void> {
     await this.redis.set(this.key(userId, tokenId), '1', ttlSeconds);
   }
 
@@ -22,4 +26,3 @@ export class RefreshTokensRepository {
     await this.redis.del(this.key(userId, tokenId));
   }
 }
-

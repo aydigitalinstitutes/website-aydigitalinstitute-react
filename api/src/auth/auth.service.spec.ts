@@ -44,9 +44,13 @@ describe('AuthService', () => {
     it('rejects when email already exists', async () => {
       usersRepo.findByEmail.mockResolvedValue({ id: 'u1' } as any);
 
-      await expect(service.register({ email: 'a@b.com', name: 'A', password: 'secret123' })).rejects.toBeInstanceOf(
-        ForbiddenException
-      );
+      await expect(
+        service.register({
+          email: 'a@b.com',
+          name: 'A',
+          password: 'secret123',
+        }),
+      ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('creates local user and stores refresh token', async () => {
@@ -58,7 +62,11 @@ describe('AuthService', () => {
         role: 'USER',
       } as any);
 
-      const result = await service.register({ email: 'a@b.com', name: 'A', password: 'secret123' });
+      const result = await service.register({
+        email: 'a@b.com',
+        name: 'A',
+        password: 'secret123',
+      });
 
       expect(result.user.email).toBe('a@b.com');
       expect(jwt.signAsync).toHaveBeenCalledTimes(2);
@@ -70,7 +78,9 @@ describe('AuthService', () => {
     it('rejects invalid credentials when user missing', async () => {
       usersRepo.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login({ email: 'a@b.com', password: 'x' })).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.login({ email: 'a@b.com', password: 'x' }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
     it('rejects when account is inactive', async () => {
@@ -84,7 +94,9 @@ describe('AuthService', () => {
         passwordHash: hash,
       } as any);
 
-      await expect(service.login({ email: 'a@b.com', password: 'admin123' })).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(
+        service.login({ email: 'a@b.com', password: 'admin123' }),
+      ).rejects.toBeInstanceOf(ForbiddenException);
     });
 
     it('issues token pair on valid login', async () => {
@@ -98,7 +110,10 @@ describe('AuthService', () => {
         passwordHash: hash,
       } as any);
 
-      const result = await service.login({ email: 'a@b.com', password: 'admin123' });
+      const result = await service.login({
+        email: 'a@b.com',
+        password: 'admin123',
+      });
 
       expect(result.accessToken).toBeTruthy();
       expect(result.refreshToken).toBeTruthy();
@@ -108,23 +123,37 @@ describe('AuthService', () => {
 
   describe('refresh', () => {
     it('rejects when missing refresh token', async () => {
-      await expect(service.refresh(undefined)).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(service.refresh(undefined)).rejects.toBeInstanceOf(
+        UnauthorizedException,
+      );
     });
 
     it('rejects when refresh token invalid', async () => {
       jwt.verifyAsync.mockRejectedValueOnce(new Error('bad'));
-      await expect(service.refresh('bad')).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(service.refresh('bad')).rejects.toBeInstanceOf(
+        UnauthorizedException,
+      );
     });
 
     it('rejects when refresh token revoked', async () => {
-      jwt.verifyAsync.mockResolvedValueOnce({ sub: 'u1', tokenId: 't1', type: 'refresh' });
+      jwt.verifyAsync.mockResolvedValueOnce({
+        sub: 'u1',
+        tokenId: 't1',
+        type: 'refresh',
+      });
       refreshRepo.exists.mockResolvedValueOnce(false);
 
-      await expect(service.refresh('r')).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(service.refresh('r')).rejects.toBeInstanceOf(
+        UnauthorizedException,
+      );
     });
 
     it('rotates refresh token and issues new pair', async () => {
-      jwt.verifyAsync.mockResolvedValueOnce({ sub: 'u1', tokenId: 't1', type: 'refresh' });
+      jwt.verifyAsync.mockResolvedValueOnce({
+        sub: 'u1',
+        tokenId: 't1',
+        type: 'refresh',
+      });
       refreshRepo.exists.mockResolvedValueOnce(true);
       usersRepo.findById.mockResolvedValueOnce({
         id: 'u1',
@@ -142,19 +171,37 @@ describe('AuthService', () => {
     });
 
     it('rejects when user not found', async () => {
-      jwt.verifyAsync.mockResolvedValueOnce({ sub: 'u1', tokenId: 't1', type: 'refresh' });
+      jwt.verifyAsync.mockResolvedValueOnce({
+        sub: 'u1',
+        tokenId: 't1',
+        type: 'refresh',
+      });
       refreshRepo.exists.mockResolvedValueOnce(true);
       usersRepo.findById.mockResolvedValueOnce(null);
 
-      await expect(service.refresh('r')).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(service.refresh('r')).rejects.toBeInstanceOf(
+        UnauthorizedException,
+      );
     });
 
     it('rejects when user is inactive', async () => {
-      jwt.verifyAsync.mockResolvedValueOnce({ sub: 'u1', tokenId: 't1', type: 'refresh' });
+      jwt.verifyAsync.mockResolvedValueOnce({
+        sub: 'u1',
+        tokenId: 't1',
+        type: 'refresh',
+      });
       refreshRepo.exists.mockResolvedValueOnce(true);
-      usersRepo.findById.mockResolvedValueOnce({ id: 'u1', email: 'a@b.com', name: 'A', role: 'USER', isActive: false } as any);
+      usersRepo.findById.mockResolvedValueOnce({
+        id: 'u1',
+        email: 'a@b.com',
+        name: 'A',
+        role: 'USER',
+        isActive: false,
+      } as any);
 
-      await expect(service.refresh('r')).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(service.refresh('r')).rejects.toBeInstanceOf(
+        ForbiddenException,
+      );
     });
   });
 
@@ -194,7 +241,7 @@ describe('AuthService', () => {
           providerId: 'p1',
           email: 'a@b.com',
           name: 'A',
-        })
+        }),
       ).rejects.toBeInstanceOf(ForbiddenException);
     });
   });
@@ -205,7 +252,11 @@ describe('AuthService', () => {
     });
 
     it('revokes token when valid refresh token', async () => {
-      jwt.verifyAsync.mockResolvedValueOnce({ sub: 'u1', tokenId: 't1', type: 'refresh' });
+      jwt.verifyAsync.mockResolvedValueOnce({
+        sub: 'u1',
+        tokenId: 't1',
+        type: 'refresh',
+      });
       await service.logout('r');
       expect(refreshRepo.revoke).toHaveBeenCalledWith('u1', 't1');
     });
@@ -218,7 +269,9 @@ describe('AuthService', () => {
 
   describe('redirect', () => {
     it('returns configured redirect', () => {
-      expect(service.getOAuthSuccessRedirect()).toContain('http://localhost/success');
+      expect(service.getOAuthSuccessRedirect()).toContain(
+        'http://localhost/success',
+      );
     });
   });
 

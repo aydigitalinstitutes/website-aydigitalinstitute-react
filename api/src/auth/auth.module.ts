@@ -11,7 +11,10 @@ import { GitHubStrategy } from './strategies/github.strategy';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
-  imports: [PassportModule.register({ session: false }), JwtModule.register({})],
+  imports: [
+    PassportModule.register({ session: false }),
+    JwtModule.register({}),
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,
@@ -25,4 +28,3 @@ import { RolesGuard } from './guards/roles.guard';
   exports: [AuthService, RolesGuard],
 })
 export class AuthModule {}
-

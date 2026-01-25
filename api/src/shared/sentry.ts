@@ -15,4 +15,3 @@ export const initSentry = (config: ConfigService): void => {
     tracesSampleRate: nodeEnv === 'production' ? 0.1 : 1,
   });
 };
-
