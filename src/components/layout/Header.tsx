@@ -75,7 +75,16 @@ const Header: React.FC = () => {
                   <FaSignOutAlt /> Logout
                 </button>
               </>
-            ) : null}
+            ) : (
+              <>
+                <Link to="/login" className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
+                  Sign In
+                </Link>
+                <Link to="/register" className="btn-primary text-sm py-2 px-6">
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -118,7 +127,24 @@ const Header: React.FC = () => {
                       <FaSignOutAlt /> Logout
                     </button>
                   </>
-                ) : null}
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="btn-secondary text-sm w-full flex items-center justify-center gap-2"
+                    >
+                      Sign In
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="btn-primary text-sm w-full flex items-center justify-center gap-2"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </nav>
           </div>

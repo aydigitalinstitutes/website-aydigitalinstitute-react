@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import type { AxiosError } from 'axios';
 import type { ReactNode } from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
@@ -62,7 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(null);
         setIsAuthenticated(false);
       }
-    } catch (error) {
+    } catch {
       setUser(null);
       setIsAuthenticated(false);
     } finally {

@@ -18,19 +18,19 @@ export class HealthService {
     try {
       await this.prisma.$queryRaw`SELECT 1`;
       dbStatus = 'up';
-    } catch (e) {
+    } catch {
       dbStatus = 'down';
     }
 
     try {
       const ping = await this.redis.ping();
       redisStatus = ping === 'PONG' ? 'up' : 'down';
-    } catch (e) {
+    } catch {
       redisStatus = 'down';
     }
 
     const memoryUsage = process.memoryUsage();
-    
+
     return {
       status: dbStatus === 'up' && redisStatus === 'up' ? 'up' : 'down',
       timestamp: new Date().toISOString(),
