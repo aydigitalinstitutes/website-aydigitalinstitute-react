@@ -35,18 +35,17 @@ function Deploy-Project {
 
 # 1. API Deployment
 if ($Service -eq "all" -or $Service -eq "api") {
-    Deploy-Project -Path "./api" -Name "Backend API"
+    Deploy-Project -Path "./apps/api" -Name "Backend API"
 }
 
 # 2. Web Deployment
 if ($Service -eq "all" -or $Service -eq "web") {
-    # Web is at root
-    Deploy-Project -Path "." -Name "Frontend Web"
+    Deploy-Project -Path "./apps/website" -Name "Frontend Web"
 }
 
 # 3. Admin Deployment
 if ($Service -eq "all" -or $Service -eq "admin") {
-    Deploy-Project -Path "./admin" -Name "Admin Portal"
+    Deploy-Project -Path "./apps/portal" -Name "Admin Portal"
 }
 
 Write-Host "`nDeployment process completed." -ForegroundColor Green

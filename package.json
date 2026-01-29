@@ -1,54 +1,22 @@
 {
-  "name": "aydigital-institute",
-  "version": "1.1.0",
-  "type": "module",
+  "name": "aydigital-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "concurrently \"npm:dev:web\" \"npm:dev:admin\" \"npm:dev:api\"",
-    "dev:web": "vite",
-    "dev:admin": "npm -C admin run dev",
-    "dev:api": "npm -C api run start:dev",
-    "build": "vite build",
-    "test": "npm run test:web && npm run test:admin && npm run test:api",
-    "test:web": "vitest run",
-    "test:admin": "npm -C admin run test",
-    "test:api": "npm -C api run test",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "prepare": "husky"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": "npx eslint --fix"
-  },
-  "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
-    "axios": "^1.13.2",
-    "framer-motion": "^12.29.0",
-    "gsap": "^3.14.2",
-    "lottie-react": "^2.4.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.71.1",
-    "react-icons": "^4.12.0",
-    "react-router-dom": "^6.20.1",
-    "zod": "^4.3.6"
+    "dev": "concurrently \"npm run dev --workspace=@aydigital/api\" \"npm run dev --workspace=@aydigital/website\" \"npm run dev --workspace=@aydigital/portal\"",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
   },
   "devDependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
-    "@types/node": "^25.0.10",
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.16",
     "concurrently": "^9.2.1",
     "husky": "^9.1.7",
-    "jsdom": "^27.4.0",
     "lint-staged": "^16.2.7",
-    "postcss": "^8.4.32",
-    "tailwindcss": "^3.4.0",
-    "typescript": "^5.9.3",
-    "vite": "^5.0.8",
-    "vitest": "^4.0.18"
+    "prettier": "^3.4.2",
+    "typescript": "^5.9.3"
   }
 }

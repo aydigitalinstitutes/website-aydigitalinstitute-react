@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String       @id @default(uuid())
+  email         String       @unique
+  passwordHash  String?
+  name          String
+  role          String       @default("USER")
+  provider      String       @default("LOCAL")
+  providerId    String?
+  avatarUrl     String?
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([role])
+  @@index([provider, providerId])
+  LessonPlan LessonPlan[]
+}
+
+model LessonPlan {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  content     String // Could be JSON or markdown
+  subject     String
+  gradeLevel  String
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([subject])
+  @@index([gradeLevel])
+}
+
