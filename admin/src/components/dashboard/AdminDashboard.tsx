@@ -3,6 +3,7 @@ import { FaUsers, FaGraduationCap, FaChartBar, FaCog, FaSignOutAlt, FaBookOpen, 
 import { motion } from 'framer-motion';
 import { fadeInUp, staggerContainer, staggerItem } from '../../utils/animations';
 import { useState } from 'react';
+import StudentOverview from './StudentOverview';
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
@@ -138,7 +139,10 @@ const AdminDashboard = () => {
 
         {/* Dashboard Content */}
         <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6 lg:p-8">
-          <motion.div
+          {(user?.role === 'USER' || user?.role === 'STUDENT') && activeTab === 'overview' ? (
+            <StudentOverview />
+          ) : (
+            <motion.div
             variants={staggerContainer}
             initial="initial"
             animate="animate"
@@ -267,6 +271,7 @@ const AdminDashboard = () => {
               </motion.div>
             </div>
           </motion.div>
+          )}
         </main>
       </div>
     </div>

@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const checkAuth = async (): Promise<void> => {
     try {
       const response = await api.get('/auth/me');
-      if (response.data.success && response.data.user.role === 'ADMIN') {
+      if (response.data.success) {
         setUser(response.data.user);
         setIsAuthenticated(true);
       } else {
@@ -75,12 +75,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await api.post('/auth/login', { email, password });
 
-      if (response.data.success && response.data.user.role === 'ADMIN') {
+      if (response.data.success) {
         setUser(response.data.user);
         setIsAuthenticated(true);
         return { success: true, data: response.data.user };
       } else {
-        return { success: false, message: 'Access denied. Admin privileges required.' };
+        return { success: false, message: 'Login failed' };
       }
     } catch (error) {
       const axiosError = error as AxiosError<ApiErrorResponse>;

@@ -27,6 +27,9 @@ const AdminLoginForm = ({ onSuccess }: AdminLoginFormProps) => {
     if (result.success) {
       if (onSuccess) {
         onSuccess();
+      } else {
+        // Redirect if success
+        window.location.href = '/dashboard';
       }
     } else {
       setError('root', { message: result.message });

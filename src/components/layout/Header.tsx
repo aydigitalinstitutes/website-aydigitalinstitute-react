@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { FaBars, FaTimes, FaUser } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import { scrollToSection } from '../../utils/helpers';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { isAuthenticated, user, logout } = useAuth();
-  const navigate = useNavigate();
 
   const menuItems = ['Home', 'Courses', 'About', 'Why Us', 'Reviews', 'Contact'];
+  const portalUrl = 'http://localhost:5174';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,12 +17,6 @@ const Header: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-    setIsMenuOpen(false);
-  };
 
   const handleMenuClick = (item: string) => {
     const sectionId = item === 'Home' ? 'home' : item.toLowerCase().replace(' ', '-');
@@ -66,25 +58,12 @@ const Header: React.FC = () => {
 
           {/* Desktop Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            {isAuthenticated ? (
-              <>
-                <Link to="/dashboard" className="btn-secondary text-sm flex items-center gap-2 py-2 px-4">
-                  <FaUser /> {user?.name?.split(' ')[0] || 'Dashboard'}
-                </Link>
-                <button onClick={handleLogout} className="btn-primary text-sm flex items-center gap-2 py-2 px-4">
-                  <FaSignOutAlt /> Logout
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
-                  Sign In
-                </Link>
-                <Link to="/register" className="btn-primary text-sm py-2 px-6">
-                  Register
-                </Link>
-              </>
-            )}
+            <a href={`${portalUrl}/login`} className="font-medium text-gray-700 hover:text-primary-600 transition-colors">
+              Sign In
+            </a>
+            <a href={`${portalUrl}/register`} className="btn-primary text-sm py-2 px-6">
+              Register
+            </a>
           </div>
 
           {/* Mobile Menu Button */}
@@ -111,40 +90,18 @@ const Header: React.FC = () => {
                 </button>
               ))}
               <div className="flex flex-col space-y-2 pt-4">
-                {isAuthenticated ? (
-                  <>
-                    <Link
-                      to="/dashboard"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="btn-secondary text-sm w-full flex items-center justify-center gap-2"
-                    >
-                      <FaUser /> Dashboard
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="btn-primary text-sm w-full flex items-center justify-center gap-2"
-                    >
-                      <FaSignOutAlt /> Logout
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="btn-secondary text-sm w-full flex items-center justify-center gap-2"
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="btn-primary text-sm w-full flex items-center justify-center gap-2"
-                    >
-                      Register
-                    </Link>
-                  </>
-                )}
+                <a
+                  href={`${portalUrl}/login`}
+                  className="btn-secondary text-sm w-full flex items-center justify-center gap-2"
+                >
+                  Sign In
+                </a>
+                <a
+                  href={`${portalUrl}/register`}
+                  className="btn-primary text-sm w-full flex items-center justify-center gap-2"
+                >
+                  Register
+                </a>
               </div>
             </nav>
           </div>
@@ -155,3 +112,4 @@ const Header: React.FC = () => {
 };
 
 export default Header;
+

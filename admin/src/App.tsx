@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import AdminLogin from './components/auth/AdminLogin';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import AdminDashboard from './components/dashboard/AdminDashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import './App.css';
@@ -11,7 +12,8 @@ function App() {
       <AuthProvider>
         <div className="App">
           <Routes>
-            <Route path="/login" element={<AdminLogin />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route
               path="/dashboard"
               element={
@@ -21,7 +23,6 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </div>
       </AuthProvider>
