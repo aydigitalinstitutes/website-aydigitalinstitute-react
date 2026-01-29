@@ -14,7 +14,7 @@ import BackToTop from './components/common/BackToTop';
 import Home from './pages/Home';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import AdminLogin from './components/auth/AdminLogin';
+// import AdminLogin from './components/auth/AdminLogin';
 import Dashboard from './components/auth/Dashboard';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import AnimatedPage from './components/common/AnimatedPage';
@@ -22,7 +22,7 @@ import AnimatedPage from './components/common/AnimatedPage';
 function AppContent() {
   useScrollAnimation();
   const location = useLocation();
-  const isAuthPage = ['/login', '/register', '/admin-login'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register'].includes(location.pathname);
 
   return (
     <div className="App font-sans text-gray-900">
@@ -53,14 +53,7 @@ function AppContent() {
               </AnimatedPage>
             }
           />
-          <Route
-            path="/admin-login"
-            element={
-              <AnimatedPage>
-                <AdminLogin />
-              </AnimatedPage>
-            }
-          />
+          {/* Removed separate admin-login route, using single login page */}
           <Route
             path="/dashboard"
             element={
