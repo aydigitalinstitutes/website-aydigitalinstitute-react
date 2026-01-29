@@ -1,9 +1,11 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { pageVariants, pageTransition } from '../../utils/animations';
 
-const AnimatedPage = ({ children, className = '' }) => {
+const AnimatedPage = React.forwardRef(({ children, className = '' }, ref) => {
   return (
     <motion.div
+      ref={ref}
       initial="initial"
       animate="in"
       exit="out"
@@ -14,6 +16,6 @@ const AnimatedPage = ({ children, className = '' }) => {
       {children}
     </motion.div>
   );
-};
+});
 
 export default AnimatedPage;

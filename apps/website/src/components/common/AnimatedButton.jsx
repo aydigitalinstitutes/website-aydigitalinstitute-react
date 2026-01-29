@@ -1,6 +1,7 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 
-const AnimatedButton = ({
+const AnimatedButton = React.forwardRef(({
   children,
   onClick,
   type = 'button',
@@ -9,7 +10,7 @@ const AnimatedButton = ({
   disabled = false,
   loading = false,
   ...props
-}) => {
+}, ref) => {
   const baseClasses = 'px-6 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variantClasses = {
@@ -20,6 +21,7 @@ const AnimatedButton = ({
 
   return (
     <motion.button
+      ref={ref}
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
@@ -45,6 +47,6 @@ const AnimatedButton = ({
       )}
     </motion.button>
   );
-};
+});
 
 export default AnimatedButton;
