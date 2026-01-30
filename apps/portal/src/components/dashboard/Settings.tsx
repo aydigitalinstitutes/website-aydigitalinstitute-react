@@ -70,12 +70,10 @@ const Settings = () => {
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       name: user?.name || "",
-      username: (user as any)?.username || "",
-      phoneNumber: (user as any)?.phoneNumber || "",
-      dob: (user as any)?.dob
-        ? new Date((user as any).dob).toISOString().split("T")[0]
-        : "",
-      gender: (user as any)?.gender || "",
+      username: user?.username || "",
+      phoneNumber: user?.phoneNumber || "",
+      dob: user?.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
+      gender: user?.gender || "",
     },
   });
 
@@ -115,9 +113,10 @@ const Settings = () => {
       await checkAuth();
       setSuccessMessage("Profile updated successfully");
       setTimeout(() => setSuccessMessage(null), 3000);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setErrorProfile("root", {
-        message: err.response?.data?.message || "Failed to update profile",
+        message: err.response?.data?.error?.message || err.response?.data?.message || "Failed to update profile",
       });
     }
   };
@@ -132,9 +131,10 @@ const Settings = () => {
       setSuccessMessage("Password changed successfully");
       resetPassword();
       setTimeout(() => setSuccessMessage(null), 3000);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       setErrorPassword("root", {
-        message: err.response?.data?.message || "Failed to change password",
+        message: err.response?.data?.error?.message || err.response?.data?.message || "Failed to change password",
       });
     }
   };
@@ -241,9 +241,9 @@ const Settings = () => {
                   </label>
                   <div className="flex gap-4 items-center">
                     <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
-                      {(user as any)?.avatarUrl ? (
+                      {user?.avatarUrl ? (
                         <img
-                          src={(user as any).avatarUrl}
+                          src={user.avatarUrl}
                           alt="Avatar"
                           className="h-full w-full object-cover"
                         />

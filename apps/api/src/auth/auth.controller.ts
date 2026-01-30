@@ -50,7 +50,11 @@ export class AuthController {
   ) {
     const result = await this.auth.register(dto);
     this.auth.setAuthCookies(res, result);
-    return { success: true, user: result.user };
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    };
   }
 
   @ApiOperation({ summary: 'Login a user' })
@@ -66,7 +70,11 @@ export class AuthController {
   ) {
     const result = await this.auth.login(dto);
     this.auth.setAuthCookies(res, result);
-    return { success: true, user: result.user };
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    };
   }
 
   @ApiOperation({ summary: 'Refresh access token' })
@@ -80,7 +88,11 @@ export class AuthController {
     const refreshToken = dto.refreshToken ?? req.cookies?.refreshToken;
     const result = await this.auth.refresh(refreshToken);
     this.auth.setAuthCookies(res, result);
-    return { success: true };
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+    };
   }
 
   @ApiOperation({ summary: 'Logout a user' })
@@ -95,7 +107,7 @@ export class AuthController {
     const refreshToken = req.cookies?.refreshToken;
     await this.auth.logout(refreshToken);
     this.auth.clearAuthCookies(res);
-    return { success: true };
+    return {};
   }
 
   @ApiOperation({ summary: 'Get current user profile' })
@@ -104,7 +116,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   async me(@Req() req: any) {
-    return { success: true, user: req.user };
+    return { user: req.user };
   }
 
   @ApiOperation({ summary: 'Update user profile' })
@@ -133,7 +145,7 @@ export class AuthController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     const user = await this.auth.updateProfile(req.user.id, dto, file);
-    return { success: true, user };
+    return { user };
   }
 
   @ApiOperation({ summary: 'Get user avatar' })
@@ -158,7 +170,7 @@ export class AuthController {
   @Post('change-password')
   async changePassword(@Req() req: any, @Body() dto: ChangePasswordDto) {
     await this.auth.changePassword(req.user.id, dto);
-    return { success: true };
+    return {};
   }
 
   @ApiOperation({ summary: 'Google login' })

@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaEnvelope, FaLock, FaUserCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginSchema, type LoginFormData } from "../../lib/zod-schemas";
 import AnimatedButton from "../common/AnimatedButton";
 import {
@@ -19,6 +19,7 @@ interface LoginFormProps {
 
 const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -35,7 +36,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
       if (onSuccess) {
         onSuccess();
       } else {
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }
     } else {
       setError("root", { message: result.message });

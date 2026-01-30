@@ -99,15 +99,18 @@ const heroContent = [
   {
     key: 'hero_title_prefix',
     title: 'Learn Computer & Digital Skills — ',
+    subtitle: '',
     section: 'hero_content'
   },
   {
     key: 'hero_title_suffix',
     title: 'Become Job Ready',
+    subtitle: '',
     section: 'hero_content'
   },
   {
     key: 'hero_subtitle',
+    title: '',
     subtitle: 'AY Digital Institute is a computer training center that helps students and professionals learn practical skills with projects, guidance, and career support.',
     section: 'hero_content'
   }
@@ -116,16 +119,19 @@ const heroContent = [
 const aboutContent = [
   {
     key: 'about_description',
+    title: '',
     subtitle: 'AY Digital Institute provides practical computer education for students, job seekers, and working professionals. We focus on step-by-step learning, real assignments, and personal support so you can confidently use skills in real life or at work.',
     section: 'about_content'
   },
   {
     key: 'nielit_title',
     title: 'NIELIT Certified Courses',
+    subtitle: '',
     section: 'about_content'
   },
   {
     key: 'nielit_description',
+    title: '',
     subtitle: 'We offer <strong>NIELIT (National Institute of Electronics & Information Technology)</strong> courses — a Government of India organisation under the Ministry of Electronics & Information Technology (MeitY). Our courses range from basic digital literacy (ACC, BCC, CCC) to advanced professional certifications (O/A/B/C Level) and short-term skill boost programs. All certifications are <strong>government-recognized and nationally valid</strong>, making them valuable for job applications and career advancement.',
     section: 'about_content'
   }
@@ -134,6 +140,7 @@ const aboutContent = [
 const coursesContent = [
   {
     key: 'courses_description',
+    title: '',
     subtitle: 'Choose from basic to advanced courses — NIELIT certified courses (ACC, BCC, CCC, O/A/B/C Level), professional diplomas (DCA, ADCA), and modern skill courses (Python, AI, IoT, Digital Marketing). Perfect for beginners, job seekers, and professionals. All NIELIT certifications are government-recognized and nationally valid.',
     section: 'courses_content'
   }

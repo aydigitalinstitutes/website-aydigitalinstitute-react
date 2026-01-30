@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
@@ -20,6 +21,7 @@ interface AdminLoginFormProps {
 
 const AdminLoginForm = ({ onSuccess }: AdminLoginFormProps) => {
   const { login } = useAuth();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -37,7 +39,7 @@ const AdminLoginForm = ({ onSuccess }: AdminLoginFormProps) => {
         onSuccess();
       } else {
         // Redirect if success
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }
     } else {
       setError("root", { message: result.message });

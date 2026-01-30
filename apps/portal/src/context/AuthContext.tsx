@@ -15,23 +15,28 @@ type ApiErrorResponse = {
   errors?: Record<string, string>; // Fallback for legacy
 };
 
-export type AuthUser = {
+export type User = {
   id: number;
   name: string;
   email: string;
   role: string;
+  username?: string;
+  phoneNumber?: string;
+  dob?: string;
+  gender?: string;
+  avatarUrl?: string;
 };
 
 type LoginResult =
-  | { success: true; data: AuthUser }
+  | { success: true; data: User }
   | { success: false; message: string };
 
 type RegisterResult =
-  | { success: true; data: AuthUser }
+  | { success: true; data: User }
   | { success: false; message: string; errors?: Record<string, string> };
 
 type AuthContextValue = {
-  user: AuthUser | null;
+  user: User | null;
   loading: boolean;
   isAuthenticated: boolean;
   login: (
@@ -39,6 +44,7 @@ type AuthContextValue = {
     password: string,
     rememberMe?: boolean,
   ) => Promise<LoginResult>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: (data: any) => Promise<RegisterResult>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
@@ -55,7 +61,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -68,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const response = await api.get("/auth/me");
       if (response.data.success) {
-        setUser(response.data.user);
+        setUser(response.data.data.user);
         setIsAuthenticated(true);
       } else {
         setUser(null);
@@ -95,9 +101,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       if (response.data.success) {
-        setUser(response.data.user);
+        setUser(response.data.data.user);
         setIsAuthenticated(true);
-        return { success: true, data: response.data.user };
+        return { success: true, data: response.data.data.user };
       } else {
         return { success: false, message: "Login failed" };
       }
@@ -115,14 +121,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const register = async (data: any): Promise<RegisterResult> => {
     try {
       const response = await api.post("/auth/register", data);
 
       if (response.data.success) {
-        setUser(response.data.user);
+        setUser(response.data.data.user);
         setIsAuthenticated(true);
-        return { success: true, data: response.data.user };
+        return { success: true, data: response.data.data.user };
       } else {
         return { success: false, message: "Registration failed" };
       }

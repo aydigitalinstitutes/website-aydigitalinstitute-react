@@ -60,29 +60,25 @@ const WebsiteManagement = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch data based on active tab
-  useEffect(() => {
-    fetchData();
-  }, [activeTab, selectedSection]);
-
   const fetchData = async () => {
     setLoading(true);
     try {
       if (activeTab === "courses") {
         const res = await api.get("/website-content/courses");
-        setCourses(res.data);
+        setCourses(res.data.data);
       } else if (activeTab === "content") {
         const res = await api.get(
           `/website-content/items?section=${selectedSection}`,
         );
-        setItems(res.data);
+        setItems(res.data.data);
       } else if (activeTab === "theme") {
         const res = await api.get("/website-content/items?section=theme");
-        setItems(res.data);
+        setItems(res.data.data);
       } else {
         const res = await api.get(
           `/website-content/items?section=${activeTab}`,
         );
-        setItems(res.data);
+        setItems(res.data.data);
       }
     } catch (error) {
       console.error("Failed to fetch data", error);
@@ -90,6 +86,11 @@ const WebsiteManagement = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, selectedSection]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
@@ -277,7 +278,14 @@ const WebsiteManagement = () => {
   );
 };
 
-const NavButton = ({ active, onClick, icon: Icon, label }: any) => (
+interface NavButtonProps {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ElementType;
+  label: string;
+}
+
+const NavButton = ({ active, onClick, icon: Icon, label }: NavButtonProps) => (
   <button
     onClick={onClick}
     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
@@ -436,6 +444,15 @@ const ThemeItem = ({
   );
 };
 
+interface ItemModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  activeTab: string;
+  selectedSection: string;
+  editingItem: ContentItem | Course | null;
+  onSave: () => void;
+}
+
 // Modal Component
 const ItemModal = ({
   onClose,
@@ -443,7 +460,7 @@ const ItemModal = ({
   selectedSection,
   editingItem,
   onSave,
-}: any) => {
+}: ItemModalProps) => {
   const {
     register,
     handleSubmit,
@@ -478,6 +495,7 @@ const ItemModal = ({
     );
   }, [editingItem, activeTab, selectedSection, reset]);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     try {
       // Format data if needed

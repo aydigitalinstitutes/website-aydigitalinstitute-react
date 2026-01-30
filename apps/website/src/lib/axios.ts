@@ -24,7 +24,18 @@ api.interceptors.request.use(
 
 // Response interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Unwrap standard API response structure
+    if (
+      response.data &&
+      typeof response.data === "object" &&
+      "success" in response.data &&
+      "data" in response.data
+    ) {
+      response.data = response.data.data;
+    }
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 

@@ -8,7 +8,7 @@ import {
   FaPhone,
   FaUserPlus,
 } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { registerSchema, type RegisterFormData } from "../../lib/zod-schemas";
 import AnimatedButton from "../common/AnimatedButton";
 import {
@@ -26,6 +26,7 @@ interface RegisterFormProps {
 
 const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
   const { register: registerUser } = useAuth();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -38,6 +39,7 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
   const courses = coursesData.map((course) => course.title);
 
   const onSubmit = async (data: RegisterFormData) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...registerData } = data;
     const result = await registerUser(registerData);
 
@@ -45,7 +47,7 @@ const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
       if (onSuccess) {
         onSuccess();
       } else {
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }
     } else {
       if (result.errors) {

@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
+import { TransformInterceptor } from './shared/transform.interceptor';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
@@ -41,6 +42,7 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new TransformInterceptor());
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 

@@ -24,6 +24,62 @@ import { useState } from "react";
 import StudentOverview from "./StudentOverview";
 import Settings from "./Settings";
 import WebsiteManagement from "./WebsiteManagement";
+import { User } from "../../context/AuthContext";
+
+const SidebarContent = ({
+  user,
+  menuItems,
+  activeTab,
+  setActiveTab,
+  setMobileMenuOpen,
+  styles,
+}: {
+  user: User | null;
+  menuItems: string[];
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  setMobileMenuOpen: (open: boolean) => void;
+  styles: Record<string, string>;
+}) => (
+  <>
+    <div className={`h-16 flex items-center px-6 border-b ${styles.border}`}>
+      <span className={`text-xl font-bold ${styles.headerText}`}>
+        {user?.role === "ADMIN"
+          ? "Admin Portal"
+          : user?.role === "TEACHER"
+          ? "Teacher Portal"
+          : user?.role === "STUDENT"
+          ? "Student Portal"
+          : "User Dashboard"}
+      </span>
+    </div>
+    <nav className="p-4 space-y-1">
+      {menuItems.map((item) => (
+        <button
+          key={item}
+          onClick={() => {
+            setActiveTab(item.toLowerCase());
+            setMobileMenuOpen(false);
+          }}
+          className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+            activeTab === item.toLowerCase()
+              ? styles.itemActive
+              : `${styles.itemText} ${styles.itemHover}`
+          }`}
+        >
+          {item === "Overview" && <FaChartBar className="mr-3 h-5 w-5" />}
+          {item === "Students" && <FaUsers className="mr-3 h-5 w-5" />}
+          {item === "Courses" && <FaBookOpen className="mr-3 h-5 w-5" />}
+          {item === "Analytics" && <FaGraduationCap className="mr-3 h-5 w-5" />}
+          {item === "Website" && <FaGlobe className="mr-3 h-5 w-5" />}
+          {item === "Settings" && <FaCog className="mr-3 h-5 w-5" />}
+          {item}
+        </button>
+      ))}
+    </nav>
+  </>
+);
+
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const { navColor } = useUI();
@@ -123,55 +179,20 @@ const AdminDashboard = () => {
 
   const styles = getSidebarStyles();
 
-  const SidebarContent = () => (
-    <>
-      <div className={`h-16 flex items-center px-6 border-b ${styles.border}`}>
-        <span className={`text-xl font-bold ${styles.headerText}`}>
-          {user?.role === "ADMIN"
-            ? "Admin Portal"
-            : user?.role === "TEACHER"
-              ? "Teacher Portal"
-              : user?.role === "STUDENT"
-                ? "Student Portal"
-                : "User Dashboard"}
-        </span>
-      </div>
-      <nav className="p-4 space-y-1">
-        {menuItems.map((item) => (
-          <button
-            key={item}
-            onClick={() => {
-              setActiveTab(item.toLowerCase());
-              setMobileMenuOpen(false);
-            }}
-            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-              activeTab === item.toLowerCase()
-                ? styles.itemActive
-                : `${styles.itemText} ${styles.itemHover}`
-            }`}
-          >
-            {item === "Overview" && <FaChartBar className="mr-3 h-5 w-5" />}
-            {item === "Students" && <FaUsers className="mr-3 h-5 w-5" />}
-            {item === "Courses" && <FaBookOpen className="mr-3 h-5 w-5" />}
-            {item === "Analytics" && (
-              <FaGraduationCap className="mr-3 h-5 w-5" />
-            )}
-            {item === "Website" && <FaGlobe className="mr-3 h-5 w-5" />}
-            {item === "Settings" && <FaCog className="mr-3 h-5 w-5" />}
-            {item}
-          </button>
-        ))}
-      </nav>
-    </>
-  );
-
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Desktop Sidebar */}
       <aside
         className={`w-64 shadow-md hidden md:block fixed h-full z-30 transition-colors duration-300 ${styles.container}`}
       >
-        <SidebarContent />
+        <SidebarContent
+          user={user}
+          menuItems={menuItems}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          setMobileMenuOpen={setMobileMenuOpen}
+          styles={styles}
+        />
       </aside>
 
       {/* Mobile Sidebar Overlay */}
@@ -201,7 +222,14 @@ const AdminDashboard = () => {
                   <FaTimes className="h-6 w-6 text-white" />
                 </button>
               </div>
-              <SidebarContent />
+              <SidebarContent
+                user={user}
+                menuItems={menuItems}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                setMobileMenuOpen={setMobileMenuOpen}
+                styles={styles}
+              />
             </motion.div>
           </>
         )}
