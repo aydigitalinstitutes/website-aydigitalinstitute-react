@@ -28,6 +28,7 @@ export type AuthResult = {
   };
   accessToken: string;
   refreshToken: string;
+  isLongSession?: boolean;
 };
 
 @Injectable()
@@ -51,7 +52,10 @@ export class AuthService {
     return Number(this.config.get<string>('JWT_ACCESS_TTL_SECONDS') ?? 900);
   }
 
-  private refreshTtlSeconds(): number {
+  private refreshTtlSeconds(isLongSession = false): number {
+    if (isLongSession) {
+      return 60 * 60 * 24 * 30; // 30 days
+    }
     return Number(
       this.config.get<string>('JWT_REFRESH_TTL_SECONDS') ?? 60 * 60 * 24 * 7,
     );
@@ -98,7 +102,11 @@ export class AuthService {
     });
   }
 
-  async login(dto: { email: string; password: string }): Promise<AuthResult> {
+  async login(dto: {
+    email: string;
+    password: string;
+    rememberMe?: boolean;
+  }): Promise<AuthResult> {
     const user = await this.usersRepo.findByEmailOrUsername(dto.email);
     if (!user || !user.passwordHash) {
       throw new UnauthorizedException('Invalid credentials');
@@ -112,12 +120,15 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.issueTokensForUser({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role as 'ADMIN' | 'USER',
-    });
+    return this.issueTokensForUser(
+      {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role as 'ADMIN' | 'USER',
+      },
+      dto.rememberMe,
+    );
   }
 
   async oauthLogin(profile: OAuthProfile): Promise<AuthResult> {
@@ -205,12 +216,17 @@ export class AuthService {
       maxAge: this.accessTtlSeconds() * 1000,
     });
 
-    res.cookie('refreshToken', result.refreshToken, {
+    const refreshOptions: any = {
       httpOnly: true,
       secure,
       sameSite: 'strict',
-      maxAge: this.refreshTtlSeconds() * 1000,
-    });
+    };
+
+    if (result.isLongSession) {
+      refreshOptions.maxAge = this.refreshTtlSeconds(true) * 1000;
+    }
+
+    res.cookie('refreshToken', result.refreshToken, refreshOptions);
   }
 
   clearAuthCookies(res: Response): void {
@@ -220,6 +236,7 @@ export class AuthService {
 
   private async issueTokensForUser(
     user: AuthResult['user'],
+    isLongSession = false,
   ): Promise<AuthResult> {
     const accessPayload: JwtAccessPayload = {
       sub: user.id,
@@ -241,16 +258,21 @@ export class AuthService {
       }),
       this.jwt.signAsync(refreshPayload, {
         secret: this.refreshSecret(),
-        expiresIn: this.refreshTtlSeconds(),
+        expiresIn: this.refreshTtlSeconds(isLongSession),
       }),
     ]);
 
-    await this.refreshRepo.store(user.id, tokenId, this.refreshTtlSeconds());
+    await this.refreshRepo.store(
+      user.id,
+      tokenId,
+      this.refreshTtlSeconds(isLongSession),
+    );
 
     return {
       user,
       accessToken,
       refreshToken,
+      isLongSession,
     };
   }
 

@@ -10,6 +10,7 @@ import {
 import { scrollToSection } from "../../utils/helpers";
 import { Section, Container } from "../common/Section";
 import AnimatedButton from "../common/AnimatedButton";
+import SkeletonLoader from "../common/SkeletonLoader";
 import api from "../../lib/axios";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -22,13 +23,13 @@ const Hero = () => {
   const buttonsRef = useRef(null);
   const statsRef = useRef(null);
 
-  const [highlights, setHighlights] = useState(defaultHeroHighlights);
-  const [stats, setStats] = useState(defaultHeroStats);
+  const [loading, setLoading] = useState(true);
+  const [highlights, setHighlights] = useState([]);
+  const [stats, setStats] = useState([]);
   const [heroContent, setHeroContent] = useState({
-    titlePrefix: "Learn Computer & Digital Skills — ",
-    titleSuffix: "Become Job Ready",
-    subtitle:
-      "AY Digital Institute is a computer training center that helps students and professionals learn practical skills with projects, guidance, and career support.",
+    titlePrefix: "",
+    titleSuffix: "",
+    subtitle: "",
   });
 
   useEffect(() => {
@@ -46,6 +47,8 @@ const Hero = () => {
               .sort((a, b) => a.order - b.order)
               .map((item) => item.title),
           );
+        } else {
+          setHighlights(defaultHeroHighlights);
         }
 
         if (statsRes.data && statsRes.data.length > 0) {
@@ -57,10 +60,16 @@ const Hero = () => {
                 label: item.title, // title used for label
               })),
           );
+        } else {
+          setStats(defaultHeroStats);
         }
 
         if (contentRes.data && contentRes.data.length > 0) {
-          const newContent = { ...heroContent };
+          const newContent = {
+            titlePrefix: "",
+            titleSuffix: "",
+            subtitle: "",
+          };
           contentRes.data.forEach((item) => {
             if (item.key === "hero_title_prefix")
               newContent.titlePrefix = item.title;
@@ -70,9 +79,26 @@ const Hero = () => {
               newContent.subtitle = item.subtitle || item.title;
           });
           setHeroContent(newContent);
+        } else {
+          setHeroContent({
+            titlePrefix: "Learn Computer & Digital Skills — ",
+            titleSuffix: "Become Job Ready",
+            subtitle:
+              "AY Digital Institute is a computer training center that helps students and professionals learn practical skills with projects, guidance, and career support.",
+          });
         }
       } catch (error) {
         console.error("Failed to fetch hero content", error);
+        setHighlights(defaultHeroHighlights);
+        setStats(defaultHeroStats);
+        setHeroContent({
+          titlePrefix: "Learn Computer & Digital Skills — ",
+          titleSuffix: "Become Job Ready",
+          subtitle:
+            "AY Digital Institute is a computer training center that helps students and professionals learn practical skills with projects, guidance, and career support.",
+        });
+      } finally {
+        setLoading(false);
       }
     };
     fetchHeroContent();
@@ -150,62 +176,85 @@ const Hero = () => {
             ref={titleRef}
             className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight"
           >
-            {heroContent.titlePrefix}
-            <motion.span
-              className="text-primary-600 inline-block"
-              animate={{
-                backgroundPosition: ["0%", "100%"],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                repeatType: "reverse",
-                ease: "linear",
-              }}
-              style={{
-                backgroundImage:
-                  "linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6)",
-                backgroundSize: "200% auto",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              {heroContent.titleSuffix}
-            </motion.span>
+            {loading ? (
+              <div className="flex flex-col items-center gap-2">
+                <SkeletonLoader className="h-16 w-3/4" />
+                <SkeletonLoader className="h-16 w-1/2" />
+              </div>
+            ) : (
+              <>
+                {heroContent.titlePrefix}
+                <motion.span
+                  className="text-primary-600 inline-block"
+                  animate={{
+                    backgroundPosition: ["0%", "100%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    ease: "linear",
+                  }}
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6)",
+                    backgroundSize: "200% auto",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  {heroContent.titleSuffix}
+                </motion.span>
+              </>
+            )}
           </h1>
 
           {/* Sub-headline */}
-          <p
-            ref={subtitleRef}
-            className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
-          >
-            {heroContent.subtitle}
-          </p>
+          {loading ? (
+            <div className="max-w-3xl mx-auto mb-8">
+              <SkeletonLoader className="h-6 w-full mb-2" />
+              <SkeletonLoader className="h-6 w-3/4 mx-auto" />
+            </div>
+          ) : (
+            <p
+              ref={subtitleRef}
+              className="text-lg md:text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
+            >
+              {heroContent.subtitle}
+            </p>
+          )}
 
           {/* Highlights */}
           <div
             ref={highlightsRef}
             className="flex flex-wrap justify-center gap-4 mb-10"
           >
-            {highlights.map((highlight, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md border border-primary-100"
-                whileHover={{
-                  scale: 1.1,
-                  y: -5,
-                  boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
-                }}
-                whileTap={{ scale: 0.95 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
-              >
-                <FaCheckCircle className="text-primary-600" />
-                <span className="text-sm font-medium text-gray-700">
-                  {highlight}
-                </span>
-              </motion.div>
-            ))}
+            {loading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <SkeletonLoader
+                    key={index}
+                    className="h-10 w-32 rounded-full"
+                  />
+                ))
+              : highlights.map((highlight, index) => (
+                  <motion.div
+                    key={index}
+                    className="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-md border border-primary-100"
+                    whileHover={{
+                      scale: 1.1,
+                      y: -5,
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <FaCheckCircle className="text-primary-600" />
+                    <span className="text-sm font-medium text-gray-700">
+                      {highlight}
+                    </span>
+                  </motion.div>
+                ))}
           </div>
 
           {/* Buttons */}
@@ -234,33 +283,43 @@ const Hero = () => {
             ref={statsRef}
             className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16"
           >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                className="bg-white p-6 rounded-xl shadow-lg border border-primary-100"
-                whileHover={{
-                  y: -10,
-                  scale: 1.05,
-                  boxShadow: "0 20px 25px rgba(0,0,0,0.1)",
-                }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <motion.div
-                  className="text-3xl md:text-4xl font-bold text-primary-600 mb-2"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{
-                    delay: index * 0.1,
-                    type: "spring",
-                    stiffness: 200,
-                    damping: 10,
-                  }}
-                >
-                  {stat.value}
-                </motion.div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
+            {loading
+              ? Array.from({ length: 3 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-white p-6 rounded-xl shadow-lg border border-primary-100"
+                  >
+                    <SkeletonLoader className="h-10 w-20 mb-2" />
+                    <SkeletonLoader className="h-4 w-32" />
+                  </div>
+                ))
+              : stats.map((stat, index) => (
+                  <motion.div
+                    key={index}
+                    className="bg-white p-6 rounded-xl shadow-lg border border-primary-100"
+                    whileHover={{
+                      y: -10,
+                      scale: 1.05,
+                      boxShadow: "0 20px 25px rgba(0,0,0,0.1)",
+                    }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <motion.div
+                      className="text-3xl md:text-4xl font-bold text-primary-600 mb-2"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        delay: index * 0.1,
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 10,
+                      }}
+                    >
+                      {stat.value}
+                    </motion.div>
+                    <div className="text-gray-600 font-medium">{stat.label}</div>
+                  </motion.div>
+                ))}
           </div>
         </div>
       </Container>

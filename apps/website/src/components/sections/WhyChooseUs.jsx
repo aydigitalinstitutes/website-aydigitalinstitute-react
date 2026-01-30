@@ -13,6 +13,7 @@ import {
   SectionSubtitle,
   Container,
 } from "../common/Section";
+import SkeletonLoader from "../common/SkeletonLoader";
 import api from "../../lib/axios";
 
 const iconMap = {
@@ -24,7 +25,8 @@ const iconMap = {
 };
 
 const WhyChooseUs = () => {
-  const [reasons, setReasons] = useState(defaultData);
+  const [reasons, setReasons] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchReasons = async () => {
@@ -42,9 +44,14 @@ const WhyChooseUs = () => {
                 description: item.subtitle,
               })),
           );
+        } else {
+          setReasons(defaultData);
         }
       } catch (error) {
         console.error("Failed to fetch why choose us", error);
+        setReasons(defaultData);
+      } finally {
+        setLoading(false);
       }
     };
     fetchReasons();
@@ -62,28 +69,39 @@ const WhyChooseUs = () => {
         </SectionSubtitle>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {reasons.map((reason, index) => {
-            const IconComponent = iconMap[reason.icon];
-            return (
-              <div
-                key={index}
-                className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl border-2 border-primary-100 hover:border-primary-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scale-in"
-                style={{ animationDelay: `${(index + 1) * 0.15}s` }}
-              >
-                <div className="flex justify-center mb-4 transition-transform duration-300 hover:scale-110">
-                  {IconComponent && (
-                    <IconComponent className="text-4xl text-primary-600" />
-                  )}
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-white p-8 rounded-xl border border-gray-200 shadow-md"
+                >
+                  <SkeletonLoader className="h-12 w-12 rounded-full mb-4 mx-auto" />
+                  <SkeletonLoader className="h-6 w-3/4 mx-auto mb-3" />
+                  <SkeletonLoader className="h-4 w-full mx-auto" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
-                  {reason.title}
-                </h3>
-                <p className="text-gray-600 text-center">
-                  {reason.description}
-                </p>
-              </div>
-            );
-          })}
+              ))
+            : reasons.map((reason, index) => {
+                const IconComponent = iconMap[reason.icon];
+                return (
+                  <div
+                    key={index}
+                    className="bg-gradient-to-br from-primary-50 to-white p-8 rounded-xl border-2 border-primary-100 hover:border-primary-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 scale-in"
+                    style={{ animationDelay: `${(index + 1) * 0.15}s` }}
+                  >
+                    <div className="flex justify-center mb-4 transition-transform duration-300 hover:scale-110">
+                      {IconComponent && (
+                        <IconComponent className="text-4xl text-primary-600" />
+                      )}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 text-center">
+                      {reason.title}
+                    </h3>
+                    <p className="text-gray-600 text-center">
+                      {reason.description}
+                    </p>
+                  </div>
+                );
+              })}
         </div>
       </Container>
     </Section>

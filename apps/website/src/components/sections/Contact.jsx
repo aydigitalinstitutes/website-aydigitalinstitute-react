@@ -7,6 +7,7 @@ import {
   SectionSubtitle,
   Container,
 } from "../common/Section";
+import SkeletonLoader from "../common/SkeletonLoader";
 import api from "../../lib/axios";
 
 const iconMap = {
@@ -23,8 +24,9 @@ const Contact = () => {
     course: "",
     message: "",
   });
-  const [contactInfo, setContactInfo] = useState(defaultContactInfo);
+  const [contactInfo, setContactInfo] = useState([]);
   const [courseList, setCourseList] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +49,8 @@ const Contact = () => {
                 link: item.link,
               })),
           );
+        } else {
+          setContactInfo(defaultContactInfo);
         }
 
         if (coursesRes.data && coursesRes.data.length > 0) {
@@ -54,6 +58,9 @@ const Contact = () => {
         }
       } catch (e) {
         console.error("Failed to fetch contact data", e);
+        setContactInfo(defaultContactInfo);
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -88,33 +95,45 @@ const Contact = () => {
               Get in Touch
             </h3>
             <div className="space-y-6">
-              {contactInfo.map((info, index) => {
-                const IconComponent = iconMap[info.icon];
-                return (
-                  <div key={index} className="flex items-start gap-4">
-                    <div className="mt-1">
-                      {IconComponent && (
-                        <IconComponent className="text-2xl text-primary-600" />
-                      )}
+              {loading
+                ? Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="flex items-start gap-4">
+                      <div className="mt-1">
+                        <SkeletonLoader className="h-8 w-8 rounded-full" />
+                      </div>
+                      <div className="w-full">
+                        <SkeletonLoader className="h-5 w-32 mb-1" />
+                        <SkeletonLoader className="h-4 w-48" />
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-900 mb-1">
-                        {info.label}
-                      </p>
-                      {info.link ? (
-                        <a
-                          href={info.link}
-                          className="text-primary-600 hover:text-primary-700 transition-colors"
-                        >
-                          {info.value}
-                        </a>
-                      ) : (
-                        <p className="text-gray-600">{info.value}</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  ))
+                : contactInfo.map((info, index) => {
+                    const IconComponent = iconMap[info.icon];
+                    return (
+                      <div key={index} className="flex items-start gap-4">
+                        <div className="mt-1">
+                          {IconComponent && (
+                            <IconComponent className="text-2xl text-primary-600" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-gray-900 mb-1">
+                            {info.label}
+                          </p>
+                          {info.link ? (
+                            <a
+                              href={info.link}
+                              className="text-primary-600 hover:text-primary-700 transition-colors"
+                            >
+                              {info.value}
+                            </a>
+                          ) : (
+                            <p className="text-gray-600">{info.value}</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
             </div>
           </div>
 

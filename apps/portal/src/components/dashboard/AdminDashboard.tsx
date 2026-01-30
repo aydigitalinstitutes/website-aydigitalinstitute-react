@@ -1,4 +1,5 @@
 import { useAuth } from "../../context/AuthContext";
+import { useUI } from "../../context/UIContext";
 import {
   FaUsers,
   FaGraduationCap,
@@ -25,6 +26,7 @@ import Settings from "./Settings";
 import WebsiteManagement from "./WebsiteManagement";
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
+  const { navColor } = useUI();
   const [activeTab, setActiveTab] = useState("overview");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -87,10 +89,44 @@ const AdminDashboard = () => {
     return ["Overview"].includes(item);
   });
 
+  const getSidebarStyles = () => {
+    switch (navColor) {
+      case "dark":
+        return {
+          container: "bg-gray-900 border-gray-800",
+          headerText: "text-white",
+          itemText: "text-gray-300",
+          itemHover: "hover:bg-gray-800 hover:text-white",
+          itemActive: "bg-gray-800 text-white",
+          border: "border-gray-800",
+        };
+      case "brand":
+        return {
+          container: "bg-red-700 border-red-800",
+          headerText: "text-white",
+          itemText: "text-red-100",
+          itemHover: "hover:bg-red-600 hover:text-white",
+          itemActive: "bg-red-800 text-white",
+          border: "border-red-800",
+        };
+      default: // light
+        return {
+          container: "bg-white border-gray-200",
+          headerText: "text-red-600",
+          itemText: "text-gray-600",
+          itemHover: "hover:bg-gray-50 hover:text-gray-900",
+          itemActive: "bg-red-50 text-red-700",
+          border: "border-gray-200",
+        };
+    }
+  };
+
+  const styles = getSidebarStyles();
+
   const SidebarContent = () => (
     <>
-      <div className="h-16 flex items-center px-6 border-b">
-        <span className="text-xl font-bold text-red-600">
+      <div className={`h-16 flex items-center px-6 border-b ${styles.border}`}>
+        <span className={`text-xl font-bold ${styles.headerText}`}>
           {user?.role === "ADMIN"
             ? "Admin Portal"
             : user?.role === "TEACHER"
@@ -110,8 +146,8 @@ const AdminDashboard = () => {
             }}
             className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
               activeTab === item.toLowerCase()
-                ? "bg-red-50 text-red-700"
-                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                ? styles.itemActive
+                : `${styles.itemText} ${styles.itemHover}`
             }`}
           >
             {item === "Overview" && <FaChartBar className="mr-3 h-5 w-5" />}
@@ -132,7 +168,9 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Desktop Sidebar */}
-      <aside className="w-64 bg-white shadow-md hidden md:block fixed h-full z-30">
+      <aside
+        className={`w-64 shadow-md hidden md:block fixed h-full z-30 transition-colors duration-300 ${styles.container}`}
+      >
         <SidebarContent />
       </aside>
 
@@ -152,7 +190,7 @@ const AdminDashboard = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-64 bg-white shadow-xl z-50 md:hidden"
+              className={`fixed inset-y-0 left-0 w-64 shadow-xl z-50 md:hidden ${styles.container}`}
             >
               <div className="absolute top-0 right-0 -mr-12 pt-4">
                 <button

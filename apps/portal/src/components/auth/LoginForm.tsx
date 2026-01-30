@@ -29,7 +29,7 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    const result = await login(data.email, data.password);
+    const result = await login(data.email, data.password, data.rememberMe);
 
     if (result.success) {
       if (onSuccess) {
@@ -179,6 +179,23 @@ const LoginForm = ({ onSuccess }: LoginFormProps) => {
                   </motion.p>
                 )}
               </AnimatePresence>
+            </motion.div>
+
+            <motion.div variants={staggerItem}>
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  {...register("rememberMe")}
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-900 cursor-pointer"
+                >
+                  Remember me
+                </label>
+              </div>
             </motion.div>
 
             <motion.div variants={staggerItem}>

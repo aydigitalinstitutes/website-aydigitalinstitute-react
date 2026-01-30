@@ -17,4 +17,11 @@ export class LoginDto {
   @IsString()
   @MinLength(6)
   password!: string;
+
+  @ApiProperty({
+    example: true,
+    description: 'Remember the user session',
+    required: false,
+  })
+  rememberMe?: boolean;
 }

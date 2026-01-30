@@ -8,6 +8,7 @@ import {
   Container,
 } from "../common/Section";
 import { CourseCard, getIconComponent } from "../common/CourseCard";
+import { SkeletonCard } from "../common/SkeletonLoader";
 import api from "../../lib/axios";
 
 const Courses = () => {
@@ -61,21 +62,18 @@ const Courses = () => {
 
         {/* Course Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {!loading &&
-            courses.map((course, index) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                getIcon={getIconComponent}
-                index={index}
-              />
-            ))}
-          {loading && (
-            <div className="col-span-full text-center py-10">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary-600"></div>
-              <p className="mt-2 text-gray-500">Loading courses...</p>
-            </div>
-          )}
+          {loading
+            ? Array.from({ length: 3 }).map((_, index) => (
+                <SkeletonCard key={index} />
+              ))
+            : courses.map((course, index) => (
+                <CourseCard
+                  key={course.id}
+                  course={course}
+                  getIcon={getIconComponent}
+                  index={index}
+                />
+              ))}
         </div>
 
         {/* CTA */}

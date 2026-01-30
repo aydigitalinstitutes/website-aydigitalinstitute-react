@@ -17,6 +17,7 @@ describe('AuthService', () => {
 
   const usersRepo: jest.Mocked<UsersRepository> = {
     findByEmail: jest.fn(),
+    findByEmailOrUsername: jest.fn(),
     findById: jest.fn(),
     createLocal: jest.fn(),
     upsertOAuth: jest.fn(),
@@ -76,7 +77,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('rejects invalid credentials when user missing', async () => {
-      usersRepo.findByEmail.mockResolvedValue(null);
+      usersRepo.findByEmailOrUsername.mockResolvedValue(null);
 
       await expect(
         service.login({ email: 'a@b.com', password: 'x' }),
@@ -85,7 +86,7 @@ describe('AuthService', () => {
 
     it('rejects when account is inactive', async () => {
       const hash = await bcrypt.hash('admin123', 10);
-      usersRepo.findByEmail.mockResolvedValue({
+      usersRepo.findByEmailOrUsername.mockResolvedValue({
         id: 'u1',
         email: 'a@b.com',
         name: 'A',
@@ -101,7 +102,7 @@ describe('AuthService', () => {
 
     it('issues token pair on valid login', async () => {
       const hash = await bcrypt.hash('admin123', 10);
-      usersRepo.findByEmail.mockResolvedValue({
+      usersRepo.findByEmailOrUsername.mockResolvedValue({
         id: 'u1',
         email: 'a@b.com',
         name: 'A',
